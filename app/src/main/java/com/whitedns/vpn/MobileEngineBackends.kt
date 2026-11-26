@@ -42,7 +42,7 @@ internal class PsiphonEngineBackend(private val context: Context, private val pr
                     null
                 }
                 "onExiting", "onSocksProxyPortInUse", "onUpstreamProxyError", "onInproxyMustUpgrade" -> { active.set(false); null }
-                "toString" -> "WhiteVPN Psiphon host"
+                "toString" -> "GigaVPN Psiphon host"
                 "hashCode" -> System.identityHashCode(this)
                 "equals" -> false
                 else -> when (method.returnType) { java.lang.Boolean.TYPE -> false; java.lang.Integer.TYPE -> 0; else -> null }

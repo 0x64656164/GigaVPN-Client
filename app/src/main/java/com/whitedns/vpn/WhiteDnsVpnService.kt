@@ -496,7 +496,7 @@ class WhiteDnsVpnService : VpnService() {
         }
         createNotificationChannel()
         val wakeLock = getSystemService(PowerManager::class.java)
-            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WhiteVPN:ConnectionTests")
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "GigaVPN:ConnectionTests")
             .apply { setReferenceCounted(false) }
         connectionTestWakeLock = ConnectionTestWakeLock(
             scope,
@@ -629,7 +629,7 @@ class WhiteDnsVpnService : VpnService() {
         clearActiveSelectorState()
         if (plan is BackendSessionPlan.PlatformIkev2) {
             // The platform session is adopted by a regular foreground service before this VpnService exits.
-            check(PlatformIkev2Controller.prepare(this, profile) == null) { "Open WhiteVPN to grant IKEv2 permission" }
+            check(PlatformIkev2Controller.prepare(this, profile) == null) { "Open GigaVPN to grant IKEv2 permission" }
             platformHandoff = true
             PlatformIkev2Controller.startPrepared(this, profile)
             stopForegroundCompat()

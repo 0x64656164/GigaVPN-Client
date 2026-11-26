@@ -18,7 +18,7 @@ class EngineFormsTestActivity : Activity() {
         super.onCreate(savedInstanceState)
         val colors = WhiteDnsDesignTokens.forContext(this)
         setContentView(TextView(this).apply {
-            text = "WhiteVPN"; typeface = WhiteDnsBodyBoldTypeface; textSize = 24f
+            text = "GigaVPN"; typeface = WhiteDnsBodyBoldTypeface; textSize = 24f
             gravity = Gravity.CENTER; setTextColor(colors.textPrimary); setBackgroundColor(colors.background)
         })
         ui = EngineProfilesUi(this, scope, { false }) { selections++ }

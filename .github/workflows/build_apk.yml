@@ -1,0 +1,241 @@
+name: Build GigaVPN APK
+
+# GigaVPN CI/CD: сборка .apk ТОЛЬКО в облаке.
+# Триггеры: push в main, тег v*, ручной запуск.
+# ВАЖНО: репозиторий — нативный Kotlin/Android проект (не Flutter), поэтому
+# используется Gradle + JDK 21 + Android SDK/NDK, а не flutter build apk.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gigavpn-apk-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NDK_VERSION: 29.0.14206865
+  GO_VERSION: 1.26.8
+  GRADLE_OPTS: -Dorg.gradle.logging.stacktrace=all
+
+jobs:
+  core:
+    name: Mihomo / FlClash core
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Restore core
+        id: cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            app/src/main/jniLibs/*/libclash.so
+            app/src/main/jniLibs/.mihomo-version
+            app/src/main/cpp/includes
+          key: gigavpn-core-${{ env.NDK_VERSION }}-${{ hashFiles('scripts/build-flclash-core.sh', 'native/patches/mihomo-generator-compatibility.patch') }}
+
+      - uses: actions/setup-go@v7
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Build core
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" > /dev/null
+          ANDROID_NDK="$ANDROID_HOME/ndk/$NDK_VERSION" bash scripts/build-flclash-core.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: gigavpn-native-core
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+          path: |
+            app/src/main/jniLibs/*/libclash.so
+            app/src/main/jniLibs/.mihomo-version
+            app/src/main/cpp/includes
+
+  engines:
+    name: Engine (${{ matrix.group }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - group: enginecore
+            outputs: app/libs/enginecore.aar
+            inputs: scripts/build-enginecore.py
+          - group: tor
+            outputs: |
+              app/src/main/jniLibs/*/libtor.so
+              app/src/main/jniLibs/*/libobfs4proxy.so
+              app/src/main/jniLibs/*/libsnowflake.so
+              app/src/main/jniLibs/*/libconjure.so
+            inputs: scripts/build-tor-engine.sh
+          - group: amneziawg
+            outputs: app/src/main/jniLibs/*/libamneziawg.so
+            inputs: scripts/build-amneziawg.py
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Restore ${{ matrix.group }}
+        id: cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ matrix.outputs }}
+          key: gigavpn-engine-${{ matrix.group }}-${{ env.NDK_VERSION }}-${{ hashFiles(matrix.inputs, 'scripts/build-tor-transports.py', 'scripts/fetch-tor-input.py', 'native/**') }}
+
+      - uses: actions/setup-java@v5
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/setup-go@v7
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Build ${{ matrix.group }}
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" > /dev/null
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$NDK_VERSION"
+          case "${{ matrix.group }}" in
+            enginecore) python3 scripts/build-enginecore.py ;;
+            tor)
+              NDK="$ANDROID_NDK_HOME" bash scripts/build-tor-engine.sh
+              python3 scripts/build-tor-transports.py
+              ;;
+            amneziawg) python3 scripts/build-amneziawg.py ;;
+          esac
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: gigavpn-native-${{ matrix.group }}
+          if-no-files-found: error
+          retention-days: 1
+          path: ${{ matrix.outputs }}
+
+  build:
+    name: Release APK
+    needs: [core, engines]
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+
+      - name: Install Android toolchain
+        run: |
+          sdkmanager 'platforms;android-36' 'build-tools;35.0.0' "ndk;$NDK_VERSION" 'cmake;3.22.1' > /dev/null
+          echo "ANDROID_NDK=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: gigavpn-native-core
+          path: app/src/main
+      - uses: actions/download-artifact@v5
+        with:
+          name: gigavpn-native-enginecore
+          path: app/libs
+      - uses: actions/download-artifact@v5
+        with:
+          name: gigavpn-native-tor
+          path: app/src/main/jniLibs
+      - uses: actions/download-artifact@v5
+        with:
+          name: gigavpn-native-amneziawg
+          path: app/src/main/jniLibs
+
+      - name: Verify native artifacts
+        run: |
+          find app/src/main/jniLibs -name '*.so' -exec chmod +x {} +
+          python3 scripts/verify-engine-artifacts.py --require core tor amneziawg
+          for abi in armeabi-v7a arm64-v8a x86 x86_64; do
+            test -f "app/src/main/jniLibs/$abi/libclash.so" || { echo "Missing $abi/libclash.so" >&2; exit 1; }
+          done
+
+      - name: Verify GigaVPN subscription config
+        run: |
+          python3 -c "import json; c=json.load(open('assets/config/app_config.json')); u=c['baseSubscriptionUrl']; assert u.startswith('https://'), u; print('Subscription endpoint:', u)"
+
+      - name: Create demo signing key
+        # Для демо/диплома ключ создаётся в раннере. Для реального продукта
+        # подключите WHITEDNS_RELEASE_KEYSTORE_BASE64 и пароли как repository secrets.
+        run: |
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/gigavpn-release.jks" \
+            -alias gigavpn -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass gigavpn-demo -keypass gigavpn-demo \
+            -dname "CN=GigaVPN Demo, OU=Diploma, O=GigaVPN, L=MSK, ST=MSK, C=RU" > /dev/null
+
+      - name: Build signed release
+        env:
+          WHITEDNS_RELEASE_STORE_FILE: ${{ runner.temp }}/gigavpn-release.jks
+          WHITEDNS_RELEASE_STORE_PASSWORD: gigavpn-demo
+          WHITEDNS_RELEASE_KEY_ALIAS: gigavpn
+          WHITEDNS_RELEASE_KEY_PASSWORD: gigavpn-demo
+          WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL: https://gigavpn.example.com/sub/gigavpn
+          SKIP_TESTS: '0'
+        run: |
+          ./scripts/release.sh
+          cp release/GigaVPN-V*-universal.apk release/GigaVPN.apk
+          (cd release && shasum -a 256 * > SHA256SUMS)
+          ls -lh release
+
+      - name: Verify release APK identity
+        run: |
+          aapt="$ANDROID_HOME/build-tools/36.0.0/aapt"
+          apk="$(find release -maxdepth 1 -name 'GigaVPN.apk' -print -quit)"
+          test -n "$apk" || { echo "GigaVPN.apk not found" >&2; exit 1; }
+          "$aapt" dump badging "$apk" | grep -Fq "package: name='com.gigavpn.client'"
+          "$aapt" dump badging "$apk" | grep -Fq "application-label:'GigaVPN'"
+          echo "Verified: com.gigavpn.client / GigaVPN"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: gigavpn-release-${{ github.run_id }}
+          path: release/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.2' }}
+          name: GigaVPN ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.2' }}
+          body: |
+            Автоматическая сборка GigaVPN из GitHub Actions (${{ github.sha }}).
+            - `GigaVPN.apk` — универсальная сборка (все ABI)
+            - `GigaVPN-V*-<abi>.apk` — сборки под конкретные архитектуры
+            - `SHA256SUMS` — контрольные суммы
+          files: |
+            release/GigaVPN.apk
+            release/GigaVPN-V*.apk
+            release/SHA256SUMS
+          generate_release_notes: true
+          fail_on_unmatched_files: true

@@ -8,16 +8,9 @@ name: Android
 # The FlClash core and the three engine groups build in parallel; each is skipped on a cache hit.
 
 on:
+  # GigaVPN: релизная сборка и публикация перенесены в build_apk.yml.
+  # Этот workflow остаётся только как проверка Pull Request.
   pull_request:
-  push:
-    branches: [main]
-  release:
-    types: [published]
-  workflow_dispatch:
-    inputs:
-      release_tag:
-        description: Stable tag to publish from main after verification. Leave blank to build an artifact only.
-        type: string
 
 permissions:
   contents: read

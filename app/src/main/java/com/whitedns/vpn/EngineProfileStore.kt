@@ -83,6 +83,6 @@ class EngineProfileStore(context: Context) {
     companion object {
         private val LOCK = Any()
         private const val ALIAS = "whitevpn.engine.catalog.v1"
-        private val AAD = "WhiteVPN engine catalog v1".toByteArray()
+        private val AAD = "GigaVPN engine catalog v1".toByteArray()
     }
 }

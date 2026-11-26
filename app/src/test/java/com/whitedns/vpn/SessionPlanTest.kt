@@ -21,7 +21,7 @@ class SessionPlanTest {
                 type: select
                 proxies:
                   - Auto Select
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -132,7 +132,7 @@ class SessionPlanTest {
                 type: select
                 proxies:
                   - Auto Select
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -186,7 +186,7 @@ class SessionPlanTest {
         assertTrue(bridged.automaticSelectionEligible)
         assertTrue(bridged.quickSpeedEligible)
         assertTrue(bridged.bridgeResult.applied)
-        assertEquals("Auto Select", bridged.selectedMap["WhiteDNS Proxy"])
+        assertEquals("Auto Select", bridged.selectedMap["GigaVPN Proxy"])
         assertFalse(original.bridgeEligible)
         assertEquals("retry-original-runtime", original.bridgeResult.reason)
         assertEquals(EffectiveDeviceAccess.ProxyOnlyAccess, original.effectiveDeviceAccess)

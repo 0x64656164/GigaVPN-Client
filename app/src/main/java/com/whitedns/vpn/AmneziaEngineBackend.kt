@@ -25,7 +25,7 @@ internal object AmneziaProfile {
         require(iface.addresses.isNotEmpty()) { "AmneziaWG needs an interface address" }
         require(iface.dnsServers.isNotEmpty()) { "AmneziaWG needs DNS in its configuration" }
         require(iface.includedApplications.isEmpty() && iface.excludedApplications.isEmpty()) {
-            "Use WhiteVPN app selection instead of applications in the configuration"
+            "Use GigaVPN app selection instead of applications in the configuration"
         }
         require(iface.mtu.orElse(1280) in 1280..65535) { "Invalid AmneziaWG MTU" }
         require(config.peers.isNotEmpty() && config.peers.all {

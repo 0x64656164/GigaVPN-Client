@@ -5,23 +5,23 @@ internal object EngineRuntimeYaml {
         require(endpoint.host == "127.0.0.1" && endpoint.port in 1..65535)
         return """
             proxies:
-              - name: WhiteVPN Engine
+              - name: GigaVPN Engine
                 type: socks5
                 server: 127.0.0.1
                 port: ${endpoint.port}
                 udp: false
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
-                  - WhiteVPN Engine
-              - name: WhiteDNS Auto
+                  - GigaVPN Engine
+              - name: GigaVPN Auto
                 type: select
                 proxies:
-                  - WhiteVPN Engine
+                  - GigaVPN Engine
             rules:
               - NETWORK,UDP,REJECT
-              - MATCH,WhiteDNS Proxy
+              - MATCH,GigaVPN Proxy
         """.trimIndent() + "\n"
     }
 }

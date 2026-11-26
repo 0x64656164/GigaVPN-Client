@@ -168,7 +168,7 @@ internal class SavedProfilesUi(private val activity: Activity, private val engin
         }
         add(profileCard(
             cardId = "subscription:" + SubscriptionStore.DEFAULT_SUBSCRIPTION_ID,
-            title = "WhiteVPN", kind = activity.getString(R.string.profile_subscription_type),
+            title = "GigaVPN", kind = activity.getString(R.string.profile_subscription_type),
             detail = activity.getString(R.string.subscription_builtin_detail, count(store.readCatalog()?.profiles?.size ?: 0)),
             selected = selectedEngine == null && selectedSubscription == SubscriptionStore.DEFAULT_SUBSCRIPTION_ID,
             error = "", primaryLabel = R.string.profile_connections,

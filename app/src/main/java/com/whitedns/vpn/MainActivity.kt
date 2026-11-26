@@ -92,6 +92,9 @@ import java.io.IOException
 import java.util.Locale
 import java.text.DateFormat
 
+// GigaVPN access tokens are the opaque part of a Marzban /sub/ URL.
+private val GIGAVPN_TOKEN_REGEX = Regex("[A-Za-z0-9_-]{6,128}")
+
 internal object ConnectionDelayUiRefreshPolicy {
     const val MIN_REFRESH_INTERVAL_MS = 500L
 
@@ -635,7 +638,8 @@ open class MainActivity : Activity() {
             )
         }
         val addSubscriptionButton = MaterialButton(this).apply {
-            setText(R.string.subscription_add)
+            // GigaVPN: a single clean activation entry point instead of the legacy import menu.
+            setText(R.string.access_token_add_button)
             layoutDirection = View.LAYOUT_DIRECTION_LOCALE
             textDirection = View.TEXT_DIRECTION_LOCALE
             setAllCaps(false)
@@ -652,7 +656,7 @@ open class MainActivity : Activity() {
             strokeColor = ColorStateList.valueOf(TEAL)
             rippleColor = ColorStateList.valueOf(withAlpha(TEAL, 24))
             setTextColor(TEAL)
-            setOnClickListener { showAddSubscriptionMenu(this) }
+            setOnClickListener { showAccessTokenDialog() }
         }
         val compactHeader = resources.configuration.screenWidthDp < 360
         content.addView(LinearLayout(this).apply {
@@ -1027,6 +1031,98 @@ open class MainActivity : Activity() {
                 }
             }
             show()
+        }
+    }
+
+    /**
+     * GigaVPN activation screen: one token field, one action.
+     * The subscription base URL comes from assets/config/app_config.json and is
+     * combined with the token, then handed to the existing profile resolver.
+     */
+    private fun showAccessTokenDialog() {
+        val tokenInput = TextInputEditText(this).apply {
+            setSingleLine(true)
+            layoutDirection = View.LAYOUT_DIRECTION_LTR
+            textDirection = View.TEXT_DIRECTION_LTR
+            inputType = InputType.TYPE_CLASS_TEXT
+            background = null
+            setPaddingRelative(dp(16), dp(12), dp(16), dp(12))
+            setTextColor(TEXT_PRIMARY)
+            setHintTextColor(TEXT_SECONDARY)
+            setHint(R.string.access_token_hint)
+        }
+        val tokenLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.access_token_hint)
+            helperText = getString(R.string.access_token_helper)
+            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+            boxBackgroundColor = withAlpha(SURFACE, if (palette.isDark) 232 else 246)
+            boxStrokeColor = TEAL
+            defaultHintTextColor = ColorStateList.valueOf(TEXT_SECONDARY)
+            setHelperTextColor(ColorStateList.valueOf(TEXT_SECONDARY))
+            setBoxCornerRadii(dp(8).toFloat(), dp(8).toFloat(), dp(8).toFloat(), dp(8).toFloat())
+            addView(tokenInput)
+        }
+        val body = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), dp(4))
+            addView(tokenLayout, LinearLayout.LayoutParams(-1, -2))
+        }
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.access_token_title)
+            .setMessage(R.string.access_token_message)
+            .setView(body)
+            .setNegativeButton(R.string.split_tunnel_cancel, null)
+            .setPositiveButton(R.string.access_token_activate, null)
+            .create()
+        dialog.showWhiteDnsDialog {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val token = tokenInput.text.toString().trim()
+                if (token.isEmpty()) {
+                    Toast.makeText(this@MainActivity, R.string.access_token_empty, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (!GIGAVPN_TOKEN_REGEX.matches(token)) {
+                    Toast.makeText(this@MainActivity, R.string.access_token_invalid, Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                val subscriptionUrl = runCatching {
+                    GigaVPNConfig.load(this@MainActivity).subscriptionUrl(token)
+                }.getOrElse { error ->
+                    DiagnosticLogger.warn(this@MainActivity, "gigavpn.config.failed", error = error)
+                    Toast.makeText(this@MainActivity, R.string.access_token_failed, Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                activityScope.launch {
+                    val result = runCatching {
+                        withContext(Dispatchers.IO) {
+                            val item = userSubscriptionManager.add(getString(R.string.app_name), subscriptionUrl)
+                            userSubscriptionManager.select(item.id)
+                            item
+                        }
+                    }
+                    result.onSuccess { item ->
+                        dialog.dismiss()
+                        renderSubscriptions()
+                        renderConnectionDetails(buttonModel.state)
+                        appTabs.getTabAt(0)?.select()
+                        refreshLocationOptions()
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.access_token_added, connectionCountLabel(item.connectionCount)),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }.onFailure { error ->
+                        DiagnosticLogger.warn(this@MainActivity, "gigavpn.activation.failed", error = error)
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                        Toast.makeText(
+                            this@MainActivity,
+                            localizedError(error, R.string.access_token_failed),
+                            Toast.LENGTH_LONG,
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
@@ -1718,7 +1814,7 @@ open class MainActivity : Activity() {
             gravity = Gravity.CENTER
             setPadding(dp(9), dp(4), dp(9), dp(4))
             addView(TextView(this@MainActivity).apply {
-                text = "WhiteVPN"
+                text = "GigaVPN"
                 textSize = 14.5f
                 typeface = WhiteDnsDisplayTypeface
                 setTextColor(TEXT_PRIMARY)
@@ -7019,7 +7115,7 @@ open class MainActivity : Activity() {
         val settings = lanSharingPreferenceStore.read()
         val value = lanSharingDetails(settings)
         getSystemService(ClipboardManager::class.java)
-            .setPrimaryClip(ClipData.newPlainText("WhiteVPN LAN proxy", value))
+            .setPrimaryClip(ClipData.newPlainText("GigaVPN LAN proxy", value))
         Toast.makeText(this, R.string.lan_sharing_copied, Toast.LENGTH_SHORT).show()
     }
 
@@ -8168,7 +8264,7 @@ open class MainActivity : Activity() {
     private fun copyDiagnosticsToClipboard() {
         val diagnostics = DiagnosticLogger.read(this).ifBlank { getString(R.string.diagnostics_empty) }
         val clipboard = getSystemService(ClipboardManager::class.java)
-        val clip = ClipData.newPlainText("WhiteVPN diagnostics", diagnostics).apply {
+        val clip = ClipData.newPlainText("GigaVPN diagnostics", diagnostics).apply {
             // Keeps the clipboard preview toast from rendering the log on screen (Android 13+).
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 description.extras = PersistableBundle().apply {

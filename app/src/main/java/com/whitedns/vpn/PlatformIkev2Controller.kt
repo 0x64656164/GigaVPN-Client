@@ -91,7 +91,7 @@ internal object PlatformIkev2Controller {
                 val profile = EngineProfileStore(service).selectedEngineId()?.let { EngineProfileStore(service).profile(it) }
                 if (profile?.kind == EngineKind.IKEV2) {
                     if (prepare(service, profile) != null) {
-                        publish(service, VpnState.Error("Open WhiteVPN to grant IKEv2 permission")); service.stopSelf()
+                        publish(service, VpnState.Error("Open GigaVPN to grant IKEv2 permission")); service.stopSelf()
                     } else { activeProfile = profile; connect(service) }
                 }
                 else { service.stopSelf(); RouteServiceDispatcher.dispatch(service, Actions.CONNECT) }

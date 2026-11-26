@@ -1,4 +1,4 @@
-# WhiteVPN — Security Audit
+# GigaVPN — Security Audit
 
 **Scope:** `com.whitedns.vpn` Android application at commit `a23a317` (versionName 0.0.9, versionCode 73).
 **Date:** 2026-08-01

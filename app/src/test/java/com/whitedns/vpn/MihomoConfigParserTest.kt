@@ -11,7 +11,7 @@ class MihomoConfigParserTest {
 
         assertEquals(2, snapshot.catalog.profiles.size)
         assertEquals(6, snapshot.summary.groups.size)
-        assertEquals("\uD83C\uDDFA\uD83C\uDDF8 | @WhiteDNS | US1|10MB/s", snapshot.catalog.profiles[0].tag)
+        assertEquals("\uD83C\uDDFA\uD83C\uDDF8 | @GigaVPN | US1|10MB/s", snapshot.catalog.profiles[0].tag)
         assertEquals("vless", snapshot.catalog.profiles[0].type)
         assertEquals("203.0.113.1", snapshot.catalog.profiles[0].server)
         assertEquals(443, snapshot.catalog.profiles[0].port)
@@ -46,25 +46,25 @@ class MihomoConfigParserTest {
         assertEquals(
             listOf(
                 MihomoGroupSelection("\uD83D\uDE80 Proxy Select", "\uD83C\uDDFA\uD83C\uDDF8 United States Nodes"),
-                MihomoGroupSelection("\uD83D\uDE80 WhiteDNS Proxy", "\uD83C\uDFC1Countries"),
+                MihomoGroupSelection("\uD83D\uDE80 GigaVPN Proxy", "\uD83C\uDFC1Countries"),
                 MihomoGroupSelection("\uD83C\uDFC1Countries", "\uD83C\uDDFA\uD83C\uDDF8 United States Nodes"),
             ),
             selections,
         )
-        assertEquals("\uD83D\uDE80 WhiteDNS Proxy", MihomoSelectionPolicy.trafficProbeGroup(summary)?.name)
+        assertEquals("\uD83D\uDE80 GigaVPN Proxy", MihomoSelectionPolicy.trafficProbeGroup(summary)?.name)
     }
 
     private companion object {
         private val FIXTURE = """
             proxies:
-              - name: "\U0001F1FA\U0001F1F8 | @WhiteDNS | US1|10MB/s"
+              - name: "\U0001F1FA\U0001F1F8 | @GigaVPN | US1|10MB/s"
                 type: vless
                 server: 203.0.113.1
                 port: 443
                 tls: true
                 ech-opts:
                   enable: true
-              - name: "\U0001F1E9\U0001F1EA | @WhiteDNS | DE1|9MB/s"
+              - name: "\U0001F1E9\U0001F1EA | @GigaVPN | DE1|9MB/s"
                 type: trojan
                 server: de.example.com
                 port: 8443
@@ -80,7 +80,7 @@ class MihomoConfigParserTest {
                 type: url-test
               - name: "\U0001F1E9\U0001F1EA Germany Nodes"
                 type: url-test
-              - name: "\U0001F680 WhiteDNS Proxy"
+              - name: "\U0001F680 GigaVPN Proxy"
                 type: select
                 proxies:
                   - "\U0001F3C1Countries"

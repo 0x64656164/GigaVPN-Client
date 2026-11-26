@@ -1,25 +1,29 @@
-# WhiteVPN for Android
+# GigaVPN for Android
 
-[![Latest release](https://img.shields.io/github/v/release/WhiteDNS/WhiteVPN?label=download)](https://github.com/WhiteDNS/WhiteVPN/releases/latest)
+> This repository is the GigaVPN fork of WhiteVPN (GPL-3.0). It is a **native Kotlin/Android**
+> application built with Gradle — not a Flutter project. See [CLIENT_NOTES.md](CLIENT_NOTES.md)
+> for the rebranding map, subscription configuration and CI/CD details.
+
+[![Latest release](https://img.shields.io/github/v/release/0x64656164/GigaVPN-Client?label=download)](https://github.com/0x64656164/GigaVPN-Client/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
 
 <p>
-  <a href="https://whitedns.github.io/WhiteDNS-F-Droid/">
+  <a href="https://whitedns.github.io/GigaVPN-F-Droid/">
     <img src="https://f-droid.org/assets/fdroid-logo.svg" alt="" width="40" align="middle">
-    <strong>Add the WhiteDNS repository to F-Droid</strong>
+    <strong>Add the GigaVPN repository to F-Droid</strong>
   </a>
 </p>
 
-A simple, open-source Android VPN client powered by [Mihomo](https://github.com/MetaCubeX/mihomo). WhiteVPN works out of the box with a built-in WhiteDNS subscription and also lets you bring your own.
+A simple, open-source Android VPN client powered by [Mihomo](https://github.com/MetaCubeX/mihomo). GigaVPN works out of the box with a built-in GigaVPN subscription and also lets you bring your own.
 
 <p align="center">
-  <img src="docs/screenshots/whitevpn-fa.jpg" alt="WhiteVPN Persian home screen" width="360">
+  <img src="docs/screenshots/whitevpn-fa.jpg" alt="GigaVPN Persian home screen" width="360">
 </p>
 
 ## Features
 
 - One-tap **VPN** mode and local **proxy** mode
-- Built-in WhiteDNS subscription, custom subscriptions, automatic refresh and offline cache
+- Built-in GigaVPN subscription, custom subscriptions, automatic refresh and offline cache
 - Manual server selection plus latency and download-speed tests
 - Subscription, Iran-bypass and global-proxy routing modes
 - Split tunnelling: bypass selected apps or proxy only selected apps
@@ -38,11 +42,11 @@ Share links:
 - Hysteria 2 (`hysteria2://` and `hy2://`)
 - WireGuard, including supported AmneziaWG options
 
-Subscriptions can be added as an HTTPS URL or pasted directly. WhiteVPN accepts plain or Base64-encoded link lists, Mihomo YAML, Clash JSON, and Xray JSON arrays. Clash JSON supports VLESS, VMess, Trojan, Shadowsocks and WireGuard entries; Xray JSON supports VLESS, VMess, Trojan and WireGuard outbounds.
+Subscriptions can be added as an HTTPS URL or pasted directly. GigaVPN accepts plain or Base64-encoded link lists, Mihomo YAML, Clash JSON, and Xray JSON arrays. Clash JSON supports VLESS, VMess, Trojan, Shadowsocks and WireGuard entries; Xray JSON supports VLESS, VMess, Trojan and WireGuard outbounds.
 
 ## Built-in subscription
 
-No subscription is required for first use. Automatic built-in connections try WhiteVPN Private first when configured, then the public [WhiteDNS Mihomo subscription](https://github.com/iampedii/whitedns-sub/blob/main/mihomo.yaml). Each source refreshes every 30 minutes while connected and keeps its own last valid copy for temporary network failures.
+No subscription is required for first use. Automatic built-in connections try GigaVPN Private first when configured, then the public [GigaVPN Mihomo subscription](https://github.com/iampedii/whitedns-sub/blob/main/mihomo.yaml). Each source refreshes every 30 minutes while connected and keeps its own last valid copy for temporary network failures.
 
 Official builds inject the private source through the `WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL` secret. Local builds can set the same environment variable or `privateMihomoSubscriptionUrl` in `secrets.properties`. When neither is set, the build succeeds with only the public built-in subscription; Private is omitted from menus and refreshes. Configured URLs must use HTTPS. Distributors can replace the public source with `WHITEDNS_MIHOMO_SUBSCRIPTION_URL`. Custom subscriptions remain separate and can be tested, selected, refreshed, edited or removed in the app.
 
@@ -53,7 +57,7 @@ Official builds inject the private source through the `WHITEDNS_PRIVATE_MIHOMO_S
 
 ## Install
 
-Download the latest APK from [GitHub Releases](https://github.com/WhiteDNS/WhiteVPN/releases/latest). WhiteVPN requires Android 8.0 (API 26) or newer.
+Download the latest APK from [GitHub Releases](https://github.com/0x64656164/GigaVPN-Client/releases/latest). GigaVPN requires Android 8.0 (API 26) or newer.
 
 ## Build
 
@@ -64,12 +68,12 @@ Requirements: JDK 17, Go, Android SDK and Android NDK.
 ./gradlew testDebugUnitTest assembleDebug
 ```
 
-The build script checks out the pinned [`WhiteDNS/FlClash`](https://github.com/WhiteDNS/FlClash/tree/whitedns) integration and its pinned [`WhiteDNS/mihomo`](https://github.com/WhiteDNS/mihomo/tree/whitedns) core, builds Mihomo v1.19.34 for all supported Android ABIs, and generates the JNI files consumed by the app.
+The build script checks out the pinned [`GigaVPN/FlClash`](https://github.com/GigaVPN/FlClash/tree/whitedns) integration and its pinned [`GigaVPN/mihomo`](https://github.com/GigaVPN/mihomo/tree/whitedns) core, builds Mihomo v1.19.34 for all supported Android ABIs, and generates the JNI files consumed by the app.
 
 ## Third-party software
 
-- [WhiteDNS/mihomo](https://github.com/WhiteDNS/mihomo/tree/whitedns) — maintained proxy-core fork
-- [WhiteDNS/FlClash](https://github.com/WhiteDNS/FlClash/tree/whitedns) — maintained Android core/JNI integration fork
+- [GigaVPN/mihomo](https://github.com/GigaVPN/mihomo/tree/whitedns) — maintained proxy-core fork
+- [GigaVPN/FlClash](https://github.com/GigaVPN/FlClash/tree/whitedns) — maintained Android core/JNI integration fork
 - [SubConv](https://github.com/SubConv/SubConv) — adapted share-link conversion logic
 - [ByeDPI](https://github.com/hufrea/byedpi) — optional DPI-bypass compatibility
 - AndroidX, Material Components, Kotlin Coroutines and Firebase Analytics
@@ -89,4 +93,4 @@ Please describe what changed, why it is needed, and what you tested.
 
 ## License
 
-WhiteVPN is licensed under [GPL-3.0-only](LICENSE).
+GigaVPN is licensed under [GPL-3.0-only](LICENSE).

@@ -12,9 +12,9 @@ class ConnectionLocationPolicyTest {
 
     @Test
     fun extractsCountryFromScreenshotStyleProfileTags() {
-        val france = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDEB\uD83C\uDDF7 | @WhiteDNS | FR6|5.3MB/s|GPT+-F..."), farsi)
-        val netherlands = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDF3\uD83C\uDDF1 | @WhiteDNS | NL1|16.4MB/s|GPT+-N..."), farsi)
-        val canada = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDE8\uD83C\uDDE6 | @WhiteDNS | CA2|2.7MB/s|GPT+-C..."), farsi)
+        val france = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDEB\uD83C\uDDF7 | @GigaVPN | FR6|5.3MB/s|GPT+-F..."), farsi)
+        val netherlands = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDF3\uD83C\uDDF1 | @GigaVPN | NL1|16.4MB/s|GPT+-N..."), farsi)
+        val canada = ConnectionLocationPolicy.countryForProfile(profile("\uD83C\uDDE8\uD83C\uDDE6 | @GigaVPN | CA2|2.7MB/s|GPT+-C..."), farsi)
 
         assertEquals("FR", france?.code)
         assertEquals("فرانسه", france?.country)
@@ -27,7 +27,7 @@ class ConnectionLocationPolicyTest {
 
     @Test
     fun extractsCountryFromProfileCodeTokenWithoutFlag() {
-        val australia = ConnectionLocationPolicy.countryForProfile(profile("| @WhiteDNS | AU2|1.0MB/s|GPT+-A..."), farsi)
+        val australia = ConnectionLocationPolicy.countryForProfile(profile("| @GigaVPN | AU2|1.0MB/s|GPT+-A..."), farsi)
 
         assertEquals("AU", australia?.code)
         assertEquals("استرالیا", australia?.country)
@@ -38,10 +38,10 @@ class ConnectionLocationPolicyTest {
     fun selectorLabelsOnlyShowAutoOrFlagAndCountry() {
         val options = ConnectionLocationPolicy.selectorOptions(
             listOf(
-                profile("\uD83C\uDDEB\uD83C\uDDF7 | @WhiteDNS | FR6|5.3MB/s|GPT+-F..."),
-                profile("\uD83C\uDDEB\uD83C\uDDF7 | @WhiteDNS | FR7|12.9MB/s|GPT+-F..."),
-                profile("\uD83C\uDDF3\uD83C\uDDF1 | @WhiteDNS | NL1|16.4MB/s|GPT+-N..."),
-                profile("\uD83C\uDDE8\uD83C\uDDE6 | @WhiteDNS | CA2|2.7MB/s|GPT+-C..."),
+                profile("\uD83C\uDDEB\uD83C\uDDF7 | @GigaVPN | FR6|5.3MB/s|GPT+-F..."),
+                profile("\uD83C\uDDEB\uD83C\uDDF7 | @GigaVPN | FR7|12.9MB/s|GPT+-F..."),
+                profile("\uD83C\uDDF3\uD83C\uDDF1 | @GigaVPN | NL1|16.4MB/s|GPT+-N..."),
+                profile("\uD83C\uDDE8\uD83C\uDDE6 | @GigaVPN | CA2|2.7MB/s|GPT+-C..."),
             ),
             automaticLabel = "خودکار",
             displayLocale = farsi,
@@ -57,7 +57,7 @@ class ConnectionLocationPolicyTest {
             options.map { it.label },
         )
         options.forEach { option ->
-            assertFalse(option.label.contains("@WhiteDNS"))
+            assertFalse(option.label.contains("@GigaVPN"))
             assertFalse(option.label.contains("MB/s"))
             assertFalse(option.label.contains("|"))
             assertFalse(Regex("[A-Z]{2}\\d+").containsMatchIn(option.label))
@@ -66,9 +66,9 @@ class ConnectionLocationPolicyTest {
 
     @Test
     fun autoKeepsAllProfilesAndSelectedCountryFiltersProfiles() {
-        val france = profile("\uD83C\uDDEB\uD83C\uDDF7 | @WhiteDNS | FR6|5.3MB/s|GPT+-F...")
-        val netherlands = profile("\uD83C\uDDF3\uD83C\uDDF1 | @WhiteDNS | NL1|16.4MB/s|GPT+-N...")
-        val unknown = profile("@WhiteDNS | Fast|5.3MB/s")
+        val france = profile("\uD83C\uDDEB\uD83C\uDDF7 | @GigaVPN | FR6|5.3MB/s|GPT+-F...")
+        val netherlands = profile("\uD83C\uDDF3\uD83C\uDDF1 | @GigaVPN | NL1|16.4MB/s|GPT+-N...")
+        val unknown = profile("@GigaVPN | Fast|5.3MB/s")
         val profiles = listOf(france, netherlands, unknown)
 
         val auto = ConnectionLocationPolicy.filterProfiles(

@@ -81,7 +81,7 @@ class NativeSecurityBoundaryTest {
                 val rows = sockets.lineSequence().filter { it.contains(":$port ") }.toList()
                 assertTrue("Expected native socket absent: $port", rows.isNotEmpty())
                 assertTrue("Native socket escaped loopback: $rows", rows.all { it.contains("127.0.0.1:$port ") })
-                Log.i("WhiteVPNSecurity", rows.joinToString("\n"))
+                Log.i("GigaVPNSecurity", rows.joinToString("\n"))
             }
             val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", MihomoRuntimeDefaults.MIXED_PORT))
             val connection = URL("https://www.gstatic.com/generate_204").openConnection(proxy) as HttpURLConnection

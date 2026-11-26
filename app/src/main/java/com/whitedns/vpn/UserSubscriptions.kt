@@ -380,8 +380,8 @@ object JsonSubscriptionImporter {
 }
 
 object MihomoLinkConfigBuilder {
-    private const val SELECT_GROUP = "WhiteDNS Proxy"
-    private const val AUTO_GROUP = "WhiteDNS Auto"
+    private const val SELECT_GROUP = "GigaVPN Proxy"
+    private const val AUTO_GROUP = "GigaVPN Auto"
 
     fun build(proxies: List<JSONObject>): String {
         val unique = proxies.filter(::isYamlSafeProxy).distinctBy { it.getString("name") }
@@ -407,7 +407,7 @@ object MihomoLinkConfigBuilder {
 
     fun migrateGeneratedYaml(yaml: String): String {
         val renamed = yaml
-            .replace("'WhiteDNS Select'", quote(SELECT_GROUP))
+            .replace("'GigaVPN Select'", quote(SELECT_GROUP))
             .replace("cipher: 'null'", "cipher: 'auto'")
         if ("MATCH,$SELECT_GROUP" in renamed) return renamed
         return renamed.trimEnd() + "\nrules:\n  - ${quote("MATCH,$SELECT_GROUP")}\n"

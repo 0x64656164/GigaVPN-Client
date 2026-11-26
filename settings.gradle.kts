@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WhiteDNSVPN"
+rootProject.name = "GigaVPN"
 include(":app")

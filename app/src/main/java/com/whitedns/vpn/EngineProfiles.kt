@@ -23,7 +23,7 @@ enum class EngineKind(val wireName: String, val title: String, val socks: Boolea
     DNS("dns", "DNS tunnels", true), OPENCONNECT("openconnect", "OpenConnect", false),
     IKEV2("ikev2", "IKEv2", false), AMNEZIAWG("amneziawg", "AmneziaWG", false);
     companion object {
-        // DNS tunnels stay in the dedicated WhiteDNS app.
+        // DNS tunnels stay in the dedicated GigaVPN app.
         val selectable get() = entries.filter { it != OPENCONNECT && it != DNS }
         fun from(value: String): EngineKind = entries.firstOrNull { it.wireName == value }
             ?: throw IllegalArgumentException("Unknown engine")

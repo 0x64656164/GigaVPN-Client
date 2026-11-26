@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_description">اتصال یا قطع اتصال WhiteVPN از صفحهٔ اصلی</string>
+    <string name="widget_description">اتصال یا قطع اتصال GigaVPN از صفحهٔ اصلی</string>
     <string name="widget_connect">اتصال</string>
     <string name="widget_disconnected">قطع اتصال</string>
-    <string name="widget_open_app">باز کردن WhiteVPN</string>
-    <string name="app_name">WhiteVPN</string>
+    <string name="widget_open_app">باز کردن GigaVPN</string>
+    <string name="app_name">GigaVPN</string>
     <string name="notification_channel_vpn">اتصال VPN</string>
-    <string name="notification_title">WhiteVPN</string>
+    <string name="notification_title">GigaVPN</string>
     <string name="notification_starting">در حال اتصال</string>
     <string name="notification_connected">متصل</string>
     <string name="notification_connected_public">متصل با سرورهای عمومی</string>
     <string name="notification_action_disconnect">قطع اتصال</string>
     <string name="notification_action_reconnect">اتصال دوباره</string>
-    <string name="footer_copyright">کپی‌رایت WhiteVPN</string>
-    <string name="footer_url">https://t.me/whitedns</string>
-    <string name="footer_telegram_content_description">باز کردن کانال WhiteVPN در تلگرام</string>
+    <string name="footer_copyright">کپی‌رایت GigaVPN</string>
+    <string name="footer_url">https://t.me/gigavpn</string>
+    <string name="footer_telegram_content_description">باز کردن کانال GigaVPN در تلگرام</string>
     <string name="privacy_policy_title">سیاست حریم خصوصی</string>
-    <string name="privacy_policy_message">WhiteVPN یک سرویس VPN رایگان است که هنگام اتصال، ترافیک دستگاه شما را از سرورهای VPN عبور می‌دهد.\n\n• این برنامه اطلاعات حساب از شما درخواست نمی‌کند.\n• برنامه ممکن است اطلاعات فنی لازم برای برقراری VPN، مانند وضعیت اتصال، میزان مصرف، گزارش‌های عیب‌یابی و خطاهای سرویس را پردازش کند.\n• شمارنده‌های مصرف فقط روی دستگاه شما ذخیره می‌شوند.\n• ارائه‌دهندگان شبکه ممکن است فرادادهٔ لازم برای انتقال ترافیک اینترنت را پردازش کنند.\n• مسئولیت نحوهٔ استفاده از این سرویس با شماست و WhiteVPN مسئول فعالیت غیرقانونی انجام‌شده از طریق سرویس نیست.\n• از سرویس برای فعالیت غیرقانونی استفاده نکنید. دسترسی، سرعت و حفاظت‌های حریم خصوصی بدون ضمانت ارائه می‌شوند.</string>
+    <string name="privacy_policy_message">GigaVPN یک سرویس VPN رایگان است که هنگام اتصال، ترافیک دستگاه شما را از سرورهای VPN عبور می‌دهد.\n\n• این برنامه اطلاعات حساب از شما درخواست نمی‌کند.\n• برنامه ممکن است اطلاعات فنی لازم برای برقراری VPN، مانند وضعیت اتصال، میزان مصرف، گزارش‌های عیب‌یابی و خطاهای سرویس را پردازش کند.\n• شمارنده‌های مصرف فقط روی دستگاه شما ذخیره می‌شوند.\n• ارائه‌دهندگان شبکه ممکن است فرادادهٔ لازم برای انتقال ترافیک اینترنت را پردازش کنند.\n• مسئولیت نحوهٔ استفاده از این سرویس با شماست و GigaVPN مسئول فعالیت غیرقانونی انجام‌شده از طریق سرویس نیست.\n• از سرویس برای فعالیت غیرقانونی استفاده نکنید. دسترسی، سرعت و حفاظت‌های حریم خصوصی بدون ضمانت ارائه می‌شوند.</string>
     <string name="privacy_policy_checkbox">خواندم و موافقم</string>
     <string name="privacy_policy_accept">پذیرفتن</string>
     <string name="privacy_policy_not_now">فعلاً نه</string>
@@ -41,7 +41,7 @@
     <string name="language_persian">فارسی</string>
     <string name="language_section">زبان</string>
     <string name="language_setting_title">زبان برنامه</string>
-    <string name="language_setting_detail">زبان مورد استفاده در همه بخش‌های WhiteVPN را انتخاب کنید.</string>
+    <string name="language_setting_detail">زبان مورد استفاده در همه بخش‌های GigaVPN را انتخاب کنید.</string>
     <string name="theme_dialog_title">پوسته</string>
     <string name="theme_system">مطابق دستگاه</string>
     <string name="theme_light">روشن</string>
@@ -52,8 +52,18 @@
     <string name="tab_settings">تنظیمات</string>
 
     <string name="subscriptions_title">پروفایل‌ها</string>
-    <string name="subscriptions_description">اشتراک یا پروفایل موتور بسازید، یکی را انتخاب کنید و از صفحهٔ اصلی متصل شوید.</string>
+    <string name="subscriptions_description">توکن دسترسی ربات GigaVPN را وارد کنید تا اشتراک شما فعال شود.</string>
     <string name="subscription_add">+ افزودن</string>
+    <string name="access_token_add_button">وارد کردن توکن</string>
+    <string name="access_token_title">فعال سازی GigaVPN</string>
+    <string name="access_token_message">توکن صادر شده توسط ربات GigaVPN را جایگذاری کنید. برنامه به طور خودکار اشتراک شما را بارگذاری می کند.</string>
+    <string name="access_token_hint">توکن دسترسی خود را وارد کنید</string>
+    <string name="access_token_helper">توکن قسمتی از لینک اشتراک بعد از /sub/ است</string>
+    <string name="access_token_activate">فعال سازی</string>
+    <string name="access_token_empty">توکن ارسال شده توسط ربات GigaVPN را وارد کنید.</string>
+    <string name="access_token_invalid">توکن نامعتبر است. آن را از ربات GigaVPN کپی کنید.</string>
+    <string name="access_token_failed">بارگذاری اشتراک ممکن نشد. توکن و اتصال اینترنت را بررسی کنید.</string>
+    <string name="access_token_added">GigaVPN فعال شد: %1$s</string>
     <string name="subscription_scan_qr">اسکن کد QR</string>
     <string name="subscription_scan_qr_prompt">کد QR سابسکریپشن یا کانفیگ را اسکن کنید</string>
     <string name="subscription_from_clipboard">از کلیپ‌بورد</string>
@@ -61,8 +71,8 @@
     <string name="subscription_file_read_failed">یک فایل کانفیگ خوانا با کدگذاری UTF-8 و حجم حداکثر ۲ مگابایت انتخاب کنید.</string>
     <string name="subscription_clipboard_empty">کلیپ‌بورد حاوی سابسکریپشن یا کانفیگ نیست.</string>
     <string name="subscription_builtin_detail">داخلی · %1$s</string>
-    <string name="subscription_private_name">WhiteVPN اختصاصی</string>
-    <string name="subscription_public_name">WhiteVPN عمومی</string>
+    <string name="subscription_private_name">GigaVPN اختصاصی</string>
+    <string name="subscription_public_name">GigaVPN عمومی</string>
     <string name="subscription_detail">%1$s · %2$s · %3$s</string>
     <string name="subscription_never_updated">هرگز</string>
     <string name="subscription_selected_badge">انتخاب‌شده</string>
@@ -243,7 +253,7 @@
     <string name="fragments_enable">فعال‌سازی Fragment</string>
     <string name="fragments_home_on">روشن</string>
     <string name="fragments_home_off">خاموش</string>
-    <string name="fragments_description">داده‌های ابتدایی اتصال امن را به تکه‌های کوچک‌تر تقسیم می‌کند. WhiteVPN اول همهٔ تنظیمات، بعد فقط Fragment و در پایان اتصال عادی را امتحان می‌کند.</string>
+    <string name="fragments_description">داده‌های ابتدایی اتصال امن را به تکه‌های کوچک‌تر تقسیم می‌کند. GigaVPN اول همهٔ تنظیمات، بعد فقط Fragment و در پایان اتصال عادی را امتحان می‌کند.</string>
     <string name="fragments_suggestions">پیشنهادهای Fragment</string>
     <string name="fragments_suggestion_item">پیشنهاد %1$d</string>
     <string name="fragments_customised">شخصی‌سازی‌شده</string>
@@ -322,7 +332,7 @@
     <string name="connection_mode_vpn">وی‌پی‌ان</string>
     <string name="connection_mode_proxy">پروکسی</string>
     <string name="lan_sharing_title">اشتراک وی‌پی‌ان در شبکه</string>
-    <string name="lan_sharing_description">دستگاه‌های دیگر با پروکسی HTTP یا SOCKS5 از WhiteVPN استفاده کنند.</string>
+    <string name="lan_sharing_description">دستگاه‌های دیگر با پروکسی HTTP یا SOCKS5 از GigaVPN استفاده کنند.</string>
     <string name="lan_sharing_require_password">نیاز به رمز عبور</string>
     <string name="lan_sharing_require_password_description">دسترسی را با نام کاربری و رمز ساخته‌شده محافظت کنید.</string>
     <string name="lan_sharing_manual_setup">پروکسی را روی هر دستگاه دستی تنظیم کنید. جداسازی کاربران وای‌فای یا برنامه‌هایی که پروکسی را نادیده می‌گیرند ممکن است مانع اتصال شود.</string>
@@ -444,7 +454,7 @@
     <string name="connection_chain_error_shared_proxy">نود ۱ و نود ۲ یک پراکسی داخلی مشترک دارند و زنجیره نمی‌شوند. یکی را عوض کنید.</string>
     <string name="connection_chain_error_udp">نود ۲ به UDP نیاز دارد، اما نود ۱ فقط TCP دارد. یک نود ۱ با UDP انتخاب کنید.</string>
 
-    <string name="diagnostics_empty">گزارش عیب‌یابی WhiteVPN خالی است.</string>
+    <string name="diagnostics_empty">گزارش عیب‌یابی GigaVPN خالی است.</string>
     <string name="diagnostics_copied">گزارش عیب‌یابی کپی شد.</string>
     <string name="chevron_forward">‹</string>
     <string name="engine_profiles">پروفایل‌های ذخیره‌شدهٔ موتور</string>
@@ -495,8 +505,8 @@
     <string name="engine_ipsec_unavailable">این دستگاه از تونل IPsec پشتیبانی نمی‌کند.</string>
     <string name="engine_transport_missing">فایل اجرایی Tor، روش انتقال یا دارایی‌های پل موردنیاز این دستگاه موجود نیست.</string>
     <string name="engine_native_missing">کتابخانهٔ بومی سازگار با این دستگاه در این نسخه موجود نیست.</string>
-    <string name="engine_tcp_features">اتصال مستقل TCP از طریق WhiteVPN. مسیریابی، DNS رمزگذاری‌شده، انتخاب برنامه، دسترسی پروکسی و اشتراک شبکهٔ محلی در دسترس‌اند. UDP پروکسی رد می‌شود. زنجیره‌های ذخیره‌شدهٔ Mihomo برای این اتصال متوقف‌اند. قفل VPN اندروید با این موتور سازگار نیست. آی‌پی تمیز، تنظیم آزمون TLS، نویز WireGuard در Mihomo و انتخاب خودکار موقعیت اعمال نمی‌شوند.</string>
-    <string name="engine_ikev2_features">دسترسی VPN لازم است. اندروید اتصال را با تنظیمات دروازه مدیریت می‌کند. قواعد مقصد، انتخاب برنامه، DNS سفارشی، IP پاک، دسترسی پروکسی، اشتراک شبکهٔ محلی و زنجیره‌های WhiteVPN اعمال نمی‌شوند. تنظیمات عمومی ذخیره‌شده حفظ می‌شوند.</string>
+    <string name="engine_tcp_features">اتصال مستقل TCP از طریق GigaVPN. مسیریابی، DNS رمزگذاری‌شده، انتخاب برنامه، دسترسی پروکسی و اشتراک شبکهٔ محلی در دسترس‌اند. UDP پروکسی رد می‌شود. زنجیره‌های ذخیره‌شدهٔ Mihomo برای این اتصال متوقف‌اند. قفل VPN اندروید با این موتور سازگار نیست. آی‌پی تمیز، تنظیم آزمون TLS، نویز WireGuard در Mihomo و انتخاب خودکار موقعیت اعمال نمی‌شوند.</string>
+    <string name="engine_ikev2_features">دسترسی VPN لازم است. اندروید اتصال را با تنظیمات دروازه مدیریت می‌کند. قواعد مقصد، انتخاب برنامه، DNS سفارشی، IP پاک، دسترسی پروکسی، اشتراک شبکهٔ محلی و زنجیره‌های GigaVPN اعمال نمی‌شوند. تنظیمات عمومی ذخیره‌شده حفظ می‌شوند.</string>
     <string name="engine_invalid">فیلدهای ضروری پروفایل را بررسی کنید. ذخیرهٔ پروفایل انجام نشد.</string>
     <string name="engine_stop_before_edit">پیش از ویرایش یا حذف این پروفایل اتصال آن را قطع کنید.</string>
     <string name="engine_stop_before_test">پیش از آزمایش موتور دیگر، اتصال فعلی را قطع کنید.</string>
@@ -512,7 +522,7 @@
     <string name="engine_access_conflict">این موتور به دسترسی VPN نیاز دارد. ابتدا تونل را در تنظیمات فعال کنید.</string>
     <string name="engine_missing_profile">پروفایل موتور انتخاب‌شده موجود نیست. اتصال دیگری انتخاب کنید.</string>
     <string name="engine_bootstrap">راه‌اندازی %1$s: %2$d%%</string>
-    <string name="engine_dns_explanation">این حل‌کننده‌ها تونل DNS را به سرور شما برقرار می‌کنند. DNS برنامه‌ها از DNS رمزگذاری‌شدهٔ WhiteVPN در مسیر انتخاب‌شده استفاده می‌کند. MasterDNS از حل‌کننده‌های UDP استفاده می‌کند.</string>
+    <string name="engine_dns_explanation">این حل‌کننده‌ها تونل DNS را به سرور شما برقرار می‌کنند. DNS برنامه‌ها از DNS رمزگذاری‌شدهٔ GigaVPN در مسیر انتخاب‌شده استفاده می‌کند. MasterDNS از حل‌کننده‌های UDP استفاده می‌کند.</string>
     <string name="engine_option_auto">خودکار</string>
     <string name="engine_option_cdn">CDN</string>
     <string name="engine_option_direct">مستقیم</string>
@@ -528,13 +538,13 @@
     <string name="engine_entry_title">موتورهای اتصال</string>
     <string name="engine_entry_description">SSH · Psiphon · Tor · تونل‌های DNS · AmneziaWG · IKEv2</string>
     <string name="engine_amnezia_config">پیکربندی AmneziaWG (⁦.conf⁩)</string>
-    <string name="engine_amnezia_instructions">فایل ⁦.conf⁩ یا لینک ⁦vpn://⁩ سرور AmneziaWG خودتان را وارد کنید. می‌توانید پیکربندی کامل [Interface]/[Peer] را هم در فیلد پایین جای‌گذاری کنید. انتخاب برنامه‌ها از تنظیمات WhiteVPN انجام می‌شود. واردکردن پیکربندی باعث اتصال نمی‌شود.</string>
-    <string name="engine_amnezia_features">به دسترسی VPN نیاز دارد. آدرس‌ها، DNS، مسیرها، MTU و مبهم‌سازی از همین پروفایل گرفته می‌شوند؛ انتخاب برنامه‌های WhiteVPN اعمال می‌شود. TCP و UDP پشتیبانی می‌شوند. DNS و قوانین Mihomo، آی‌پی تمیز، آزمون TLS، نویز WireGuard، زنجیره، انتخاب خودکار، حالت پراکسی و اشتراک LAN اعمال نمی‌شوند. تنظیمات ذخیره‌شده حفظ می‌شوند.</string>
+    <string name="engine_amnezia_instructions">فایل ⁦.conf⁩ یا لینک ⁦vpn://⁩ سرور AmneziaWG خودتان را وارد کنید. می‌توانید پیکربندی کامل [Interface]/[Peer] را هم در فیلد پایین جای‌گذاری کنید. انتخاب برنامه‌ها از تنظیمات GigaVPN انجام می‌شود. واردکردن پیکربندی باعث اتصال نمی‌شود.</string>
+    <string name="engine_amnezia_features">به دسترسی VPN نیاز دارد. آدرس‌ها، DNS، مسیرها، MTU و مبهم‌سازی از همین پروفایل گرفته می‌شوند؛ انتخاب برنامه‌های GigaVPN اعمال می‌شود. TCP و UDP پشتیبانی می‌شوند. DNS و قوانین Mihomo، آی‌پی تمیز، آزمون TLS، نویز WireGuard، زنجیره، انتخاب خودکار، حالت پراکسی و اشتراک LAN اعمال نمی‌شوند. تنظیمات ذخیره‌شده حفظ می‌شوند.</string>
     <string name="engine_retired">OpenConnect حذف شده است. این پروفایل ذخیره‌شده قابل حذف است؛ اتصال و تبدیل خودکار آن انجام نمی‌شود.</string>
     <string name="engine_setting_inactive">این گزینه برای موتور انتخاب‌شده اعمال نمی‌شود. تنظیم ذخیره‌شده شما حفظ شده است.</string>
     <string name="engine_profile_settings">از پروفایل موتور</string>
     <string name="engine_effective_settings">تنظیمات مؤثر · %1$s\n%2$s</string>
-    <string name="engine_mihomo_settings">Mihomo از تنظیمات مسیریابی، DNS، انتخاب برنامه، اشتراک‌گذاری، زنجیره و انتخاب خودکار WhiteVPN استفاده می‌کند. تنظیم نویز WireGuard فقط بر پروفایل‌های WireGuard اثر دارد و با موتور AmneziaWG متفاوت است.</string>
+    <string name="engine_mihomo_settings">Mihomo از تنظیمات مسیریابی، DNS، انتخاب برنامه، اشتراک‌گذاری، زنجیره و انتخاب خودکار GigaVPN استفاده می‌کند. تنظیم نویز WireGuard فقط بر پروفایل‌های WireGuard اثر دارد و با موتور AmneziaWG متفاوت است.</string>
     <string name="engine_test_settings_note">آزمون موتورها از زمان انتظار و حجم دانلود ذخیره‌شده استفاده می‌کند. راه‌اندازی موتور زمان انتظار جداگانه دارد. تعداد آزمون‌های هم‌زمان برای اشتراک‌هاست؛ آزمون موتورها یکی‌یکی انجام می‌شود. آزمون بومی به اتصال فعال همان موتور نیاز دارد.</string>
     <string name="engine_choose_vpn_access">پیش از انتخاب این موتور، حالت VPN را در تنظیمات اتصال فعال کنید. تنظیمات ذخیره‌شدهٔ شما حفظ می‌شوند.</string>
     <string name="engine_import_file">واردکردن فایل پیکربندی</string>

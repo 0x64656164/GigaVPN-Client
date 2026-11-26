@@ -299,7 +299,7 @@ class SubscriptionSnapshotResolverTest {
             server: 203.0.113.10
             port: 443
         proxy-groups:
-          - name: WhiteDNS Proxy
+          - name: GigaVPN Proxy
             type: select
             proxies:
               - '$name'

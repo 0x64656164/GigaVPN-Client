@@ -1,4 +1,4 @@
-# Design — WhiteDNS VPN
+# Design — GigaVPN VPN
 
 A locked visual system for the Android app. The Kotlin palette in
 `DashboardViews.kt` and the day/night Android colour resources are the runtime

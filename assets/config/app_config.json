@@ -1,0 +1,4 @@
+{
+  "_comment": "GigaVPN: единый источник адреса подписки. Измените baseSubscriptionUrl перед сборкой в CI/CD.",
+  "baseSubscriptionUrl": "https://gigavpn.example.com/sub/"
+}

@@ -1,6 +1,6 @@
-# WhiteVPN
+# GigaVPN
 
-WhiteVPN resolves subscriptions into usable upstream routes and governs how device or proxy-client traffic enters those routes. This glossary separates concepts currently overloaded by words such as connection, VPN, mode, runtime, health, and selection.
+GigaVPN resolves subscriptions into usable upstream routes and governs how device or proxy-client traffic enters those routes. This glossary separates concepts currently overloaded by words such as connection, VPN, mode, runtime, health, and selection.
 
 ## Connection lifecycle
 
@@ -9,7 +9,7 @@ The progression from a connect request through establishment, an optional Connec
 _Avoid_: VPN lifecycle, service lifecycle, runtime lifecycle
 
 **Connection Session**:
-A continuous period in which WhiteVPN owns an accepted data plane in either Tunnel Access or Proxy-Only Access. It begins at Session Readiness and ends only after Release Completion.
+A continuous period in which GigaVPN owns an accepted data plane in either Tunnel Access or Proxy-Only Access. It begins at Session Readiness and ends only after Release Completion.
 _Avoid_: VPN session, connection, runtime
 
 **Connect Request**:
@@ -28,12 +28,12 @@ _Avoid_: Refresh, reconnect attempt
 The current lifecycle condition: Inactive, Establishing, Active, or Releasing. Operation Failure, Data Plane Ownership, and Route Health are independent facts.
 _Avoid_: VPN state, service state, health state
 
-**WhiteVPN Data Plane**:
+**GigaVPN Data Plane**:
 The traffic-carrying capability provided through a device tunnel, proxy entries, and an upstream route.
 _Avoid_: Runtime, core, connection
 
 **Data Plane Ownership**:
-Whether WhiteVPN is known to retain traffic-carrying resources: Absent, Owned, or Uncertain.
+Whether GigaVPN is known to retain traffic-carrying resources: Absent, Owned, or Uncertain.
 _Avoid_: Started, stopped, connected
 
 **Session Readiness**:
@@ -57,7 +57,7 @@ The process of returning all data-plane ownership. Release is complete only when
 _Avoid_: UI disconnect, stop request
 
 **Release Completion**:
-Confirmation that WhiteVPN no longer owns any traffic-carrying resource from the session.
+Confirmation that GigaVPN no longer owns any traffic-carrying resource from the session.
 _Avoid_: Disconnect timeout, stopped display
 
 **Recovery**:
@@ -75,7 +75,7 @@ _Avoid_: Reconnect, refresh
 ## Platform policies and traffic entry
 
 **Always-on Policy**:
-A platform policy requiring WhiteVPN to be started or restored automatically. It expresses desired activation, not Session Readiness.
+A platform policy requiring GigaVPN to be started or restored automatically. It expresses desired activation, not Session Readiness.
 _Avoid_: Kill switch, active session
 
 **Lockdown Policy**:
@@ -83,7 +83,7 @@ A fail-closed platform policy, presented as the kill switch, that blocks direct 
 _Avoid_: Always-on VPN, connected state
 
 **Device Access Preference**:
-The user's preferred way for device traffic to enter WhiteVPN: Tunnel Access or Proxy-Only Access.
+The user's preferred way for device traffic to enter GigaVPN: Tunnel Access or Proxy-Only Access.
 _Avoid_: Connection mode, current mode
 
 **Effective Device Access**:
@@ -91,15 +91,15 @@ The access used by an establishment attempt after mandatory platform policies ar
 _Avoid_: Selected mode, requested mode
 
 **Tunnel Access**:
-A device tunnel automatically admits traffic from eligible applications into WhiteVPN.
+A device tunnel automatically admits traffic from eligible applications into GigaVPN.
 _Avoid_: VPN mode, TUN mode
 
 **Proxy-Only Access**:
-No device tunnel admits application traffic; only clients explicitly configured for a Proxy Entry enter WhiteVPN.
+No device tunnel admits application traffic; only clients explicitly configured for a Proxy Entry enter GigaVPN.
 _Avoid_: Proxy mode, local VPN
 
 **Proxy Entry**:
-An HTTP or SOCKS endpoint through which an explicitly configured client enters WhiteVPN.
+An HTTP or SOCKS endpoint through which an explicitly configured client enters GigaVPN.
 _Avoid_: Tunnel, VPN endpoint
 
 **LAN Proxy Access**:
@@ -111,17 +111,17 @@ The rule deciding which eligible applications enter Tunnel Access: All Apps, Exc
 _Avoid_: Split-tunnel mode, Off, VPN apps
 
 **Eligible App**:
-An installed application that the device permits WhiteVPN to include in or exclude from Tunnel Access.
+An installed application that the device permits GigaVPN to include in or exclude from Tunnel Access.
 _Avoid_: Launchable app
 
 ## Subscriptions and route profiles
 
 **Subscription**:
-A named definition that WhiteVPN resolves into a usable snapshot of route choices.
+A named definition that GigaVPN resolves into a usable snapshot of route choices.
 _Avoid_: Source, config, catalog, profile list
 
 **Subscription Source**:
-The origin of subscription content: WhiteVPN-managed, remote HTTPS, or inline user content.
+The origin of subscription content: GigaVPN-managed, remote HTTPS, or inline user content.
 _Avoid_: Input, URL, subscription
 
 **Subscription Snapshot**:
@@ -207,7 +207,7 @@ A user-supplied alternate address, optionally with a forced port, tried in place
 _Avoid_: Fronting IP, clean IP, validated endpoint
 
 **Managed Endpoint Candidate**:
-An alternate address and port from WhiteVPN's managed endpoint pool. The product label Clean IP does not guarantee safety, reachability, TLS validity, or successful session establishment.
+An alternate address and port from GigaVPN's managed endpoint pool. The product label Clean IP does not guarantee safety, reachability, TLS validity, or successful session establishment.
 _Avoid_: Working IP, validated IP
 
 **Endpoint Assessment**:
@@ -217,7 +217,7 @@ _Avoid_: Endpoint Candidate, validation guarantee
 ## Routing and DNS
 
 **Routing Policy**:
-The rule set deciding whether traffic already admitted into WhiteVPN uses Direct Egress or the Active Route.
+The rule set deciding whether traffic already admitted into GigaVPN uses Direct Egress or the Active Route.
 _Avoid_: Routing mode, device access mode
 
 **Subscription Routing**:
@@ -228,7 +228,7 @@ A Routing Policy that sends Iranian destinations through Direct Egress and other
 _Avoid_: Iran bypass
 
 **All-Through Routing**:
-A Routing Policy that sends all traffic already admitted into WhiteVPN through the Active Route.
+A Routing Policy that sends all traffic already admitted into GigaVPN through the Active Route.
 _Avoid_: Global proxy, all device traffic
 
 **Direct Egress**:
@@ -236,11 +236,11 @@ Traffic leaving through the device's underlying network without using a Route Pr
 _Avoid_: Bypass connection, active route
 
 **DNS Transport Policy**:
-The upstream transport used for DNS handled by WhiteVPN: Managed Encrypted DNS, custom DoH, or custom DoT. It does not by itself state how client DNS entered WhiteVPN or which egress carries resolver traffic.
+The upstream transport used for DNS handled by GigaVPN: Managed Encrypted DNS, custom DoH, or custom DoT. It does not by itself state how client DNS entered GigaVPN or which egress carries resolver traffic.
 _Avoid_: DNS privacy mode, automatic DNS
 
 **Managed Encrypted DNS**:
-WhiteVPN's managed choice of encrypted upstream DNS transports.
+GigaVPN's managed choice of encrypted upstream DNS transports.
 _Avoid_: Automatic DNS
 
 **DNS Egress**:

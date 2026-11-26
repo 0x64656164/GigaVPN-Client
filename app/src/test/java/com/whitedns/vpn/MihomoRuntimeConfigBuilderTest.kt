@@ -106,7 +106,7 @@ class MihomoRuntimeConfigBuilderTest {
     @Test
     fun corePatchUsesMihomoPortsAndDisablesConfigTun() {
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
-            appName = "WhiteDNS VPN",
+            appName = "GigaVPN VPN",
             secret = "secret-123",
             controlPort = 39123,
             splitTunnelPlan = SplitTunnelRuntimePlan(
@@ -137,7 +137,7 @@ class MihomoRuntimeConfigBuilderTest {
     @Test
     fun corePatchExposesAuthenticatedProxyOnlyWhenLanSharingIsEnabled() {
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
-            appName = "WhiteVPN",
+            appName = "GigaVPN",
             secret = "secret-123",
             splitTunnelPlan = SplitTunnelRuntimePlan.off(),
             lanSharing = LanSharingSettings(enabled = true, password = "safe-password"),
@@ -159,7 +159,7 @@ class MihomoRuntimeConfigBuilderTest {
     fun lanSharingCanRunWithoutAuthentication() {
         val settings = LanSharingSettings(enabled = true, passwordRequired = false)
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
-            appName = "WhiteVPN",
+            appName = "GigaVPN",
             secret = "secret-123",
             splitTunnelPlan = SplitTunnelRuntimePlan.off(),
             lanSharing = settings,
@@ -185,7 +185,7 @@ class MihomoRuntimeConfigBuilderTest {
     @Test
     fun corePatchDoesNotApplyBypassPackagesToDisabledConfigTun() {
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
-            appName = "WhiteDNS VPN",
+            appName = "GigaVPN VPN",
             secret = "secret-123",
             splitTunnelPlan = SplitTunnelRuntimePlan(
                 mode = SplitTunnelMode.BypassSelected,
@@ -202,7 +202,7 @@ class MihomoRuntimeConfigBuilderTest {
     @Test
     fun serviceJsonUsesRuntimePaths() {
         val service = MihomoRuntimeConfigBuilder.serviceJson(
-            appName = "WhiteDNS VPN",
+            appName = "GigaVPN VPN",
             versionName = "1.2.3",
             baseDir = "/files/mihomo",
             cacheDir = "/cache/mihomo",
@@ -343,7 +343,7 @@ class MihomoRuntimeConfigBuilderTest {
                 server: example.com
                 port: 443
             proxy-groups:
-              - name: 🚀 WhiteDNS Proxy
+              - name: 🚀 GigaVPN Proxy
                 type: select
                 proxies:
                   - Node
@@ -356,10 +356,10 @@ class MihomoRuntimeConfigBuilderTest {
         )
 
         assertTrue(runtimeYaml.contains("respect-rules: true"))
-        assertTrue(runtimeYaml.contains("- 'https://1.1.1.1/dns-query#🚀 WhiteDNS Proxy'"))
-        assertTrue(runtimeYaml.contains("- 'https://8.8.8.8/dns-query#🚀 WhiteDNS Proxy'"))
-        assertTrue(runtimeYaml.contains("- 'tls://1.1.1.1:853#🚀 WhiteDNS Proxy'"))
-        assertTrue(runtimeYaml.contains("- 'tls://8.8.8.8:853#🚀 WhiteDNS Proxy'"))
+        assertTrue(runtimeYaml.contains("- 'https://1.1.1.1/dns-query#🚀 GigaVPN Proxy'"))
+        assertTrue(runtimeYaml.contains("- 'https://8.8.8.8/dns-query#🚀 GigaVPN Proxy'"))
+        assertTrue(runtimeYaml.contains("- 'tls://1.1.1.1:853#🚀 GigaVPN Proxy'"))
+        assertTrue(runtimeYaml.contains("- 'tls://8.8.8.8:853#🚀 GigaVPN Proxy'"))
         assertFalse(runtimeYaml.contains("tcp://"))
         assertTrue(
             runtimeYaml.contains(
@@ -393,7 +393,7 @@ class MihomoRuntimeConfigBuilderTest {
                 proxies:
                   - Node A
                   - Node B
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - FirstPing
@@ -413,12 +413,12 @@ class MihomoRuntimeConfigBuilderTest {
         val result = MihomoAutomaticRoutingBridge.patch(rawYaml)
 
         assertTrue(result.applied)
-        assertEquals("WhiteDNS Proxy", result.rootName)
+        assertEquals("GigaVPN Proxy", result.rootName)
         assertEquals("Auto Select", result.targetName)
         assertEquals("inserted", result.reason)
         assertTrue(
             result.yaml.contains(
-                "  - name: WhiteDNS Proxy\n" +
+                "  - name: GigaVPN Proxy\n" +
                     "    type: select\n" +
                     "    proxies:\n" +
                     "      - 'Auto Select'\n" +
@@ -436,7 +436,7 @@ class MihomoRuntimeConfigBuilderTest {
                 type: url-test
                 proxies:
                   - Node
-              - name: "\U0001F680 WhiteDNS Proxy"
+              - name: "\U0001F680 GigaVPN Proxy"
                 type: select
                 proxies:
                   - Manual
@@ -450,7 +450,7 @@ class MihomoRuntimeConfigBuilderTest {
         val second = MihomoAutomaticRoutingBridge.patch(first.yaml)
 
         assertTrue(first.applied)
-        assertEquals("🚀 WhiteDNS Proxy", first.rootName)
+        assertEquals("🚀 GigaVPN Proxy", first.rootName)
         assertEquals("Auto Select", first.targetName)
         assertEquals("inserted", first.reason)
         assertFalse(second.applied)
@@ -467,7 +467,7 @@ class MihomoRuntimeConfigBuilderTest {
                 type: url-test
                 proxies:
                   - Node
-              - name: "\U0001F68G WhiteDNS Proxy"
+              - name: "\U0001F68G GigaVPN Proxy"
                 type: select
                 proxies:
                   - Manual
@@ -491,7 +491,7 @@ class MihomoRuntimeConfigBuilderTest {
                 type: url-test
                 include-all: true
                 url: https://www.gstatic.com/generate_204
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - FirstPing
@@ -532,7 +532,7 @@ class MihomoRuntimeConfigBuilderTest {
               - name: Auto Select
                 type: url-test
                 include-all: true
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -546,7 +546,7 @@ class MihomoRuntimeConfigBuilderTest {
               - name: Auto Select
                 type: url-test
                 include-all: true
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -568,7 +568,7 @@ class MihomoRuntimeConfigBuilderTest {
     fun automaticRoutingBridgeLeavesAlreadyReachableUrlTestUntouched() {
         val rawYaml = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - FirstPing
@@ -591,7 +591,7 @@ class MihomoRuntimeConfigBuilderTest {
     fun automaticRoutingBridgeDoesNotSubstituteAnotherUrlTestForPolicyTarget() {
         val rawYaml = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -617,7 +617,7 @@ class MihomoRuntimeConfigBuilderTest {
     fun automaticRoutingBridgeLeavesTransitivelyReachableUrlTestUntouched() {
         val rawYaml = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Cycle
@@ -625,7 +625,7 @@ class MihomoRuntimeConfigBuilderTest {
               - name: Cycle
                 type: select
                 proxies:
-                  - WhiteDNS Proxy
+                  - GigaVPN Proxy
               - name: Manual
                 type: select
                 proxies:
@@ -647,7 +647,7 @@ class MihomoRuntimeConfigBuilderTest {
     fun automaticRoutingBridgeLeavesUnsupportedAndAmbiguousLayoutsUntouched() {
         val inlineRoot = """
             proxy-groups:
-              - { name: WhiteDNS Proxy, type: select, proxies: [Auto Select] }
+              - { name: GigaVPN Proxy, type: select, proxies: [Auto Select] }
               - name: Auto Select
                 type: url-test
                 proxies:
@@ -655,7 +655,7 @@ class MihomoRuntimeConfigBuilderTest {
         """.trimIndent()
         val inlineIntermediate = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
@@ -667,11 +667,11 @@ class MihomoRuntimeConfigBuilderTest {
         """.trimIndent()
         val duplicateRoot = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
-              - name: WhiteDNS Proxy Backup
+              - name: GigaVPN Proxy Backup
                 type: select
                 proxies:
                   - Manual
@@ -700,14 +700,14 @@ class MihomoRuntimeConfigBuilderTest {
     fun automaticRoutingBridgeStopsSafelyAtCyclesAndDepthLimit() {
         val cycle = """
             proxy-groups:
-              - name: WhiteDNS Proxy
+              - name: GigaVPN Proxy
                 type: select
                 proxies:
                   - Manual
               - name: Manual
                 type: select
                 proxies:
-                  - WhiteDNS Proxy
+                  - GigaVPN Proxy
               - name: Auto Select
                 type: url-test
                 proxies:
@@ -715,7 +715,7 @@ class MihomoRuntimeConfigBuilderTest {
         """.trimIndent()
         val tooDeep = buildString {
             appendLine("proxy-groups:")
-            appendLine("  - name: WhiteDNS Proxy")
+            appendLine("  - name: GigaVPN Proxy")
             appendLine("    type: select")
             appendLine("    proxies:")
             appendLine("      - Level 1")
@@ -847,7 +847,7 @@ class MihomoRuntimeConfigBuilderTest {
                     type: select
                     proxies:
                       - Node
-                  - name: WhiteDNS Proxy
+                  - name: GigaVPN Proxy
                     type: select
                     proxies:
                       - Node
@@ -865,7 +865,7 @@ class MihomoRuntimeConfigBuilderTest {
         assertFalse(runtimeYaml.contains("rule-providers:"))
         assertFalse(runtimeYaml.contains("MATCH,DIRECT"))
         assertEquals(1, Regex("(?m)^rules:").findAll(runtimeYaml).count())
-        assertTrue(runtimeYaml.contains("rules:\n  - 'MATCH,WhiteDNS Proxy'"))
+        assertTrue(runtimeYaml.contains("rules:\n  - 'MATCH,GigaVPN Proxy'"))
         assertTrue(runtimeYaml.contains("mode: rule"))
     }
 
@@ -993,20 +993,20 @@ class MihomoRuntimeConfigBuilderTest {
     fun flClashSetupParamsCarryNativeSelections() {
         val setup = MihomoRuntimeConfigBuilder.setupParamsJson(
             mapOf(
-                "WhiteDNS Proxy Select" to "WhiteDNS Auto Select",
-                "WhiteDNS Proxy" to "WhiteDNS Countries",
+                "GigaVPN Proxy Select" to "GigaVPN Auto Select",
+                "GigaVPN Proxy" to "GigaVPN Countries",
             ),
         )
 
         assertEquals("https://www.gstatic.com/generate_204", MihomoRuntimeDefaults.DELAY_TEST_URL)
         assertEquals(MihomoRuntimeDefaults.DELAY_TEST_URL, setup.getString("test-url"))
         assertEquals(
-            "WhiteDNS Auto Select",
-            setup.getJSONObject("selected-map").getString("WhiteDNS Proxy Select"),
+            "GigaVPN Auto Select",
+            setup.getJSONObject("selected-map").getString("GigaVPN Proxy Select"),
         )
         assertEquals(
-            "WhiteDNS Countries",
-            setup.getJSONObject("selected-map").getString("WhiteDNS Proxy"),
+            "GigaVPN Countries",
+            setup.getJSONObject("selected-map").getString("GigaVPN Proxy"),
         )
     }
 
@@ -1358,16 +1358,16 @@ class MihomoRuntimeConfigBuilderTest {
         val repatched = MihomoDpiBypassPatcher.patch(patched, enabled = true, proxyPort = 31_235)
 
         assertEquals(yaml, disabled)
-        assertTrue(patched.contains("name: 'WhiteDNS ByeByeDPI'"))
+        assertTrue(patched.contains("name: 'GigaVPN ByeByeDPI'"))
         assertTrue(patched.contains("type: socks5"))
         assertTrue(patched.contains("server: 127.0.0.1"))
         assertTrue(patched.contains("udp: true"))
         assertTrue(patched.contains("port: 31234"))
-        assertTrue(patched.contains("dialer-proxy: 'WhiteDNS ByeByeDPI'"))
-        assertTrue(patched.contains("dialer-proxy: 'WhiteDNS ByeByeDPI' }"))
+        assertTrue(patched.contains("dialer-proxy: 'GigaVPN ByeByeDPI'"))
+        assertTrue(patched.contains("dialer-proxy: 'GigaVPN ByeByeDPI' }"))
         assertTrue(patched.contains("Host: host.example.com"))
         assertTrue(repatched.contains("port: 31235"))
-        assertEquals(1, Regex("name: 'WhiteDNS ByeByeDPI'").findAll(repatched).count())
+        assertEquals(1, Regex("name: 'GigaVPN ByeByeDPI'").findAll(repatched).count())
     }
 
     @Test
@@ -1403,7 +1403,7 @@ class MihomoRuntimeConfigBuilderTest {
                       "now": "Node B",
                       "all": ["Node A", "Node B"]
                     },
-                    "WhiteDNS Proxy": {
+                    "GigaVPN Proxy": {
                       "type": "Selector",
                       "now": "FirstPing",
                       "all": ["Auto Select", "FirstPing", "round-robin", "Manual"]
@@ -1422,11 +1422,11 @@ class MihomoRuntimeConfigBuilderTest {
             MihomoAdaptiveSelectionPlan(
                 groupName = "Auto Select",
                 groupType = "URLTest",
-                selections = listOf(MihomoGroupSelection("WhiteDNS Proxy", "Auto Select")),
+                selections = listOf(MihomoGroupSelection("GigaVPN Proxy", "Auto Select")),
             ),
             MihomoControllerProxies.rootScopedAdaptivePlan(
                 response = response,
-                rootName = "WhiteDNS Proxy",
+                rootName = "GigaVPN Proxy",
                 preferredGroupNames = listOf("Auto Select"),
             ),
         )
@@ -1655,7 +1655,7 @@ class MihomoRuntimeConfigBuilderTest {
             """
                 {
                   "proxies": {
-                    "WhiteDNS Proxy": {
+                    "GigaVPN Proxy": {
                       "type": "Selector",
                       "all": ["Automatic", "Manual"]
                     },
@@ -1677,12 +1677,12 @@ class MihomoRuntimeConfigBuilderTest {
         assertEquals(
             listOf(
                 MihomoGroupSelection("Manual", "Node B"),
-                MihomoGroupSelection("WhiteDNS Proxy", "Manual"),
+                MihomoGroupSelection("GigaVPN Proxy", "Manual"),
             ),
             MihomoControllerProxies.selectorPath(
                 response = response,
                 targetName = "Node B",
-                preferredRoots = listOf("WhiteDNS Proxy"),
+                preferredRoots = listOf("GigaVPN Proxy"),
             ),
         )
     }

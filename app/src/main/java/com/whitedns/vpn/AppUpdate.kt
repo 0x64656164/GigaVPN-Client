@@ -129,13 +129,14 @@ object GitHubReleaseClient {
             val version = AppUpdatePolicy.normalizedVersion(tag)
             if (version.isEmpty() || tag != tag.trim()) throw IOException("GitHub release version is invalid")
             val releaseUrl = response.getString("html_url")
-            val apkName = variant?.let { "WhiteVPN-V$version-${it.suffix}.apk" }
+            val variantApkName = variant?.let { "GigaVPN-V$version-${it.suffix}.apk" }
+            val universalApkName = "GigaVPN.apk"
             val assets = response.getJSONArray("assets")
             val selected = mutableMapOf<String, ReleaseAsset?>()
             for (index in 0 until assets.length()) {
                 val asset = assets.getJSONObject(index)
                 val name = asset.getString("name")
-                if (name != apkName && name != "SHA256SUMS") continue
+                if (name != variantApkName && name != universalApkName && name != "SHA256SUMS") continue
                 if (selected.containsKey(name)) throw IOException("GitHub release contains duplicate assets")
                 selected[name] = null
                 if (asset.getString("state") != "uploaded") continue
@@ -144,7 +145,8 @@ object GitHubReleaseClient {
                 val url = asset.getString("browser_download_url")
                 selected[name] = ReleaseAsset(id, name, url, size)
             }
-            return AppRelease(tag, releaseUrl, selected[apkName], selected["SHA256SUMS"])
+            val apk = selected[variantApkName] ?: selected[universalApkName]
+            return AppRelease(tag, releaseUrl, apk, selected["SHA256SUMS"])
                 .also { validateRelease(it, variant) }
         } catch (error: JSONException) {
             throw IOException("GitHub release response was invalid", error)
@@ -165,13 +167,17 @@ object GitHubReleaseClient {
         if (version.isEmpty() || release.version != release.version.trim()) {
             throw IOException("GitHub release version is invalid")
         }
-        requireRepositoryUrl(release.url, "/WhiteDNS/WhiteVPN/releases/tag/${release.version}")
-        for ((asset, expectedName) in listOf(
-            release.apk to variant?.let { "WhiteVPN-V$version-${it.suffix}.apk" },
-            release.checksums to "SHA256SUMS",
+        requireRepositoryUrl(release.url, "/0x64656164/GigaVPN-Client/releases/tag/${release.version}")
+        val validApkNames = setOfNotNull(
+            variant?.let { "GigaVPN-V$version-${it.suffix}.apk" },
+            "GigaVPN.apk",
+        )
+        for ((asset, validNames) in listOf(
+            release.apk to validApkNames,
+            release.checksums to setOf("SHA256SUMS"),
         )) {
             if (asset == null) continue
-            if (asset.id <= 0 || asset.size <= 0 || asset.name != expectedName) {
+            if (asset.id <= 0 || asset.size <= 0 || asset.name !in validNames) {
                 throw IOException("GitHub release asset is invalid")
             }
             requireAssetUrl(asset.url, release.version, asset.name)
@@ -179,7 +185,7 @@ object GitHubReleaseClient {
     }
 
     internal fun requireAssetUrl(url: String, tag: String, name: String) {
-        requireRepositoryUrl(url, "/WhiteDNS/WhiteVPN/releases/download/$tag/$name")
+        requireRepositoryUrl(url, "/0x64656164/GigaVPN-Client/releases/download/$tag/$name")
     }
 
     private fun positiveLong(json: JSONObject, key: String): Long {
@@ -226,7 +232,7 @@ object GitHubReleaseClient {
             connection.instanceFollowRedirects = false
             connection.setRequestProperty("Accept", if (asset) "application/octet-stream" else "application/vnd.github+json")
             connection.setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
-            connection.setRequestProperty("User-Agent", "WhiteVPN/${BuildConfig.VERSION_NAME}")
+            connection.setRequestProperty("User-Agent", "GigaVPN/${BuildConfig.VERSION_NAME}")
             try {
                 val status = connection.responseCode
                 if (status in setOf(301, 302, 303, 307, 308)) {
@@ -256,5 +262,5 @@ object GitHubReleaseClient {
     }
 
     private const val LATEST_RELEASE_URL =
-        "https://api.github.com/repos/WhiteDNS/WhiteVPN/releases/latest"
+        "https://api.github.com/repos/0x64656164/GigaVPN-Client/releases/latest"
 }

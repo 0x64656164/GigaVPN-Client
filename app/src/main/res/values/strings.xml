@@ -1,21 +1,21 @@
 <resources>
-    <string name="widget_description">Connect or disconnect WhiteVPN from your home screen</string>
+    <string name="widget_description">Connect or disconnect GigaVPN from your home screen</string>
     <string name="widget_connect">Connect</string>
     <string name="widget_disconnected">Not connected</string>
-    <string name="widget_open_app">Open WhiteVPN</string>
-    <string name="app_name">WhiteVPN</string>
+    <string name="widget_open_app">Open GigaVPN</string>
+    <string name="app_name">GigaVPN</string>
     <string name="notification_channel_vpn">VPN connection</string>
-    <string name="notification_title">WhiteVPN</string>
+    <string name="notification_title">GigaVPN</string>
     <string name="notification_starting">Connecting</string>
     <string name="notification_connected">Connected</string>
     <string name="notification_connected_public">Connected using public servers</string>
     <string name="notification_action_disconnect">Disconnect</string>
     <string name="notification_action_reconnect">Reconnect</string>
-    <string name="footer_copyright">Copyright WhiteVPN</string>
-    <string name="footer_url">https://t.me/whitedns</string>
-    <string name="footer_telegram_content_description">Open WhiteVPN on Telegram</string>
+    <string name="footer_copyright">Copyright GigaVPN</string>
+    <string name="footer_url">https://t.me/gigavpn</string>
+    <string name="footer_telegram_content_description">Open GigaVPN on Telegram</string>
     <string name="privacy_policy_title">Privacy policy</string>
-    <string name="privacy_policy_message">WhiteVPN is a free VPN service that routes your device traffic through VPN servers when connected.\n\n- We do not ask for account details in this app.\n- The app may process technical connection information needed to provide the VPN, such as connection status, traffic usage, diagnostics, and service errors.\n- The app stores usage counters locally on your device.\n- Third-party network providers may process connection metadata required to deliver internet traffic.\n- You are responsible for how you use this service. Any illegal activity performed through the service is not the responsibility of WhiteVPN.\n- Do not use the service for unlawful activity. Service availability, speed, and privacy protections are provided without warranty.</string>
+    <string name="privacy_policy_message">GigaVPN is a free VPN service that routes your device traffic through VPN servers when connected.\n\n- We do not ask for account details in this app.\n- The app may process technical connection information needed to provide the VPN, such as connection status, traffic usage, diagnostics, and service errors.\n- The app stores usage counters locally on your device.\n- Third-party network providers may process connection metadata required to deliver internet traffic.\n- You are responsible for how you use this service. Any illegal activity performed through the service is not the responsibility of GigaVPN.\n- Do not use the service for unlawful activity. Service availability, speed, and privacy protections are provided without warranty.</string>
     <string name="privacy_policy_checkbox">I have read and agree</string>
     <string name="privacy_policy_accept">Accept</string>
     <string name="privacy_policy_not_now">Not now</string>
@@ -40,7 +40,7 @@
     <string name="language_persian">فارسی</string>
     <string name="language_section">Language</string>
     <string name="language_setting_title">App language</string>
-    <string name="language_setting_detail">Choose the language used throughout WhiteVPN.</string>
+    <string name="language_setting_detail">Choose the language used throughout GigaVPN.</string>
     <string name="theme_dialog_title">Theme</string>
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
@@ -51,8 +51,18 @@
     <string name="tab_settings">Settings</string>
 
     <string name="subscriptions_title">Profiles</string>
-    <string name="subscriptions_description">Add a subscription or engine profile, select one, then connect from the VPN screen.</string>
+    <string name="subscriptions_description">Enter the access token from the GigaVPN Telegram bot to activate your subscription.</string>
     <string name="subscription_add">+ Add</string>
+    <string name="access_token_add_button">Enter token</string>
+    <string name="access_token_title">GigaVPN activation</string>
+    <string name="access_token_message">Paste the access token issued by the GigaVPN bot. The app will load your subscription automatically.</string>
+    <string name="access_token_hint">Enter your access token</string>
+    <string name="access_token_helper">The token is the part of the subscription link after /sub/</string>
+    <string name="access_token_activate">Activate</string>
+    <string name="access_token_empty">Enter the token sent by the GigaVPN bot.</string>
+    <string name="access_token_invalid">Invalid token. Copy it from the GigaVPN bot or your personal account.</string>
+    <string name="access_token_failed">Could not load the subscription. Check the token and your internet connection.</string>
+    <string name="access_token_added">GigaVPN activated: %1$s</string>
     <string name="subscription_scan_qr">Scan QR Code</string>
     <string name="subscription_scan_qr_prompt">Scan a subscription or configuration QR code</string>
     <string name="subscription_from_clipboard">From Clipboard</string>
@@ -60,8 +70,8 @@
     <string name="subscription_file_read_failed">Choose a readable UTF-8 configuration file up to 2 MB.</string>
     <string name="subscription_clipboard_empty">The clipboard does not contain a subscription or configuration.</string>
     <string name="subscription_builtin_detail">Built-in · %1$s</string>
-    <string name="subscription_private_name">WhiteVPN Private</string>
-    <string name="subscription_public_name">WhiteVPN Public fallback</string>
+    <string name="subscription_private_name">GigaVPN Private</string>
+    <string name="subscription_public_name">GigaVPN Public fallback</string>
     <string name="subscription_detail">%1$s · %2$s · %3$s</string>
     <string name="subscription_never_updated">Never</string>
     <string name="subscription_selected_badge">Selected</string>
@@ -99,7 +109,7 @@
 
     <string name="version_label">Version %1$s</string>
     <string name="update_available_title">Update available</string>
-    <string name="update_available_message">WhiteVPN %1$s is available on GitHub.</string>
+    <string name="update_available_message">GigaVPN %1$s is available on GitHub.</string>
     <string name="update_view_release">View release</string>
     <string name="update_settings_title">App updates</string>
     <string name="update_badge">New</string>
@@ -122,7 +132,7 @@
     <string name="update_cancel_download">Cancel download</string>
     <string name="update_retry">Retry download</string>
     <string name="update_install">Install update</string>
-    <string name="update_permission_denied">Allow WhiteVPN to install updates in Android settings, then tap Install update.</string>
+    <string name="update_permission_denied">Allow GigaVPN to install updates in Android settings, then tap Install update.</string>
     <string name="update_install_failed">Could not open the update installer. Check Android installation settings and try again.</string>
     <string name="output_automatic">🌐  Automatic output</string>
     <string name="metric_connection_time">Connection time</string>
@@ -191,7 +201,7 @@
     <string name="location_content_description">Location: %1$s</string>
 
     <string name="settings_title">Settings</string>
-    <string name="settings_categories_description">Choose a category to configure WhiteVPN.</string>
+    <string name="settings_categories_description">Choose a category to configure GigaVPN.</string>
     <string name="settings_category_app_preferences">App preferences</string>
     <string name="settings_category_app_preferences_detail">Subscription, appearance, and language.</string>
     <string name="settings_subscription_title">Subscription</string>
@@ -207,7 +217,7 @@
     <string name="settings_category_system_detail">Always-on VPN and the Android kill switch.</string>
     <string name="settings_category_back">Back to settings</string>
     <string name="connection_repair_title">Repair connection</string>
-    <string name="connection_repair_message">Saved connection test results and automatic route history will be cleared, then WhiteVPN’s built-in subscriptions will be refreshed. Your subscriptions and settings will stay unchanged. If connected, the current connection will keep running.</string>
+    <string name="connection_repair_message">Saved connection test results and automatic route history will be cleared, then GigaVPN’s built-in subscriptions will be refreshed. Your subscriptions and settings will stay unchanged. If connected, the current connection will keep running.</string>
     <string name="connection_repair_confirm">Repair</string>
     <string name="connection_repair_running">Repairing connection…</string>
     <string name="connection_repair_done">Connection repaired. Try connecting again.</string>
@@ -242,7 +252,7 @@
     <string name="fragments_enable">Enable connection fragments</string>
     <string name="fragments_home_on">On</string>
     <string name="fragments_home_off">Off</string>
-    <string name="fragments_description">Splits the first secure connection data into smaller pieces. WhiteVPN tries the complete setup, fragments only, then the normal connection.</string>
+    <string name="fragments_description">Splits the first secure connection data into smaller pieces. GigaVPN tries the complete setup, fragments only, then the normal connection.</string>
     <string name="fragments_suggestions">Fragment suggestions</string>
     <string name="fragments_suggestion_item">Suggestion %1$d</string>
     <string name="fragments_customised">Customised</string>
@@ -323,7 +333,7 @@
     <string name="connection_mode_local_ip" translatable="false">IP: %1$s</string>
     <string name="connection_mode_local_endpoint" translatable="false">IP: %1$s · Port: %2$s</string>
     <string name="lan_sharing_title">Share VPN on LAN</string>
-    <string name="lan_sharing_description">Let other devices use WhiteVPN through an HTTP or SOCKS5 proxy.</string>
+    <string name="lan_sharing_description">Let other devices use GigaVPN through an HTTP or SOCKS5 proxy.</string>
     <string name="lan_sharing_require_password">Require password</string>
     <string name="lan_sharing_require_password_description">Protect access with the generated username and password.</string>
     <string name="lan_sharing_manual_setup">Configure the proxy manually on each client. Wi-Fi client isolation and apps that ignore proxy settings may prevent access.</string>
@@ -445,7 +455,7 @@
     <string name="connection_chain_error_shared_proxy">Node 1 and node 2 share an inner proxy and can’t be chained. Change one of them.</string>
     <string name="connection_chain_error_udp">Node 2 needs UDP, but node 1 supports TCP only. Choose a node 1 with UDP.</string>
 
-    <string name="diagnostics_empty">The WhiteVPN diagnostics log is empty.</string>
+    <string name="diagnostics_empty">The GigaVPN diagnostics log is empty.</string>
     <string name="diagnostics_copied">Diagnostics copied.</string>
     <string name="chevron_forward">›</string>
     <string name="engine_profiles">Saved engine profiles</string>
@@ -496,8 +506,8 @@
     <string name="engine_ipsec_unavailable">This device does not provide IPsec tunnels.</string>
     <string name="engine_transport_missing">The required Tor binary, transport, or bridge assets are missing for this device.</string>
     <string name="engine_native_missing">This build does not contain a compatible native engine library for this device.</string>
-    <string name="engine_tcp_features">Standalone TCP connection through WhiteVPN. Routing, encrypted DNS, app selection, proxy access, and LAN sharing remain available. Proxied UDP is rejected. Saved Mihomo chains are paused for this connection. Android VPN lockdown is incompatible with this engine. Clean-IP, TLS integrity overrides, Mihomo WireGuard noise and automatic location selection do not apply.</string>
-    <string name="engine_ikev2_features">VPN access is required. Android manages this connection using the gateway settings. WhiteVPN destination rules, app selection, custom DNS, clean-IP overrides, proxy access, LAN sharing, and chains do not apply. Saved global preferences are preserved.</string>
+    <string name="engine_tcp_features">Standalone TCP connection through GigaVPN. Routing, encrypted DNS, app selection, proxy access, and LAN sharing remain available. Proxied UDP is rejected. Saved Mihomo chains are paused for this connection. Android VPN lockdown is incompatible with this engine. Clean-IP, TLS integrity overrides, Mihomo WireGuard noise and automatic location selection do not apply.</string>
+    <string name="engine_ikev2_features">VPN access is required. Android manages this connection using the gateway settings. GigaVPN destination rules, app selection, custom DNS, clean-IP overrides, proxy access, LAN sharing, and chains do not apply. Saved global preferences are preserved.</string>
     <string name="engine_invalid">Check the required profile fields. The profile could not be saved.</string>
     <string name="engine_stop_before_edit">Disconnect this profile before editing or deleting it.</string>
     <string name="engine_stop_before_test">Disconnect the active route before testing another engine.</string>
@@ -513,7 +523,7 @@
     <string name="engine_access_conflict">This engine requires VPN access. Enable tunnel access in Settings first.</string>
     <string name="engine_missing_profile">The selected engine profile is missing. Choose another connection.</string>
     <string name="engine_bootstrap">%1$s bootstrap: %2$d%%</string>
-    <string name="engine_dns_explanation">These resolvers establish the DNS tunnel to your server. Application DNS uses WhiteVPN’s encrypted DNS through the selected route. MasterDNS uses UDP resolvers.</string>
+    <string name="engine_dns_explanation">These resolvers establish the DNS tunnel to your server. Application DNS uses GigaVPN’s encrypted DNS through the selected route. MasterDNS uses UDP resolvers.</string>
     <string name="engine_option_auto">Automatic</string>
     <string name="engine_option_cdn">CDN</string>
     <string name="engine_option_direct">Direct</string>
@@ -529,13 +539,13 @@
     <string name="engine_entry_title">Connection engines</string>
     <string name="engine_entry_description">SSH · Psiphon · Tor · DNS tunnels · AmneziaWG · IKEv2</string>
     <string name="engine_amnezia_config">AmneziaWG configuration (.conf)</string>
-    <string name="engine_amnezia_instructions">Import a .conf file or paste a vpn:// link from your AmneziaWG server. You can also paste the full [Interface]/[Peer] configuration below. Use WhiteVPN settings for app selection. Importing does not connect.</string>
-    <string name="engine_amnezia_features">Requires VPN access. Uses addresses, DNS, routes, MTU and obfuscation from this profile; WhiteVPN app selection applies. TCP and UDP supported. Global Mihomo DNS, destination rules, clean IP, TLS tests, WireGuard noise overrides, chains, automatic selection, proxy mode and LAN sharing do not apply. Saved preferences are preserved.</string>
+    <string name="engine_amnezia_instructions">Import a .conf file or paste a vpn:// link from your AmneziaWG server. You can also paste the full [Interface]/[Peer] configuration below. Use GigaVPN settings for app selection. Importing does not connect.</string>
+    <string name="engine_amnezia_features">Requires VPN access. Uses addresses, DNS, routes, MTU and obfuscation from this profile; GigaVPN app selection applies. TCP and UDP supported. Global Mihomo DNS, destination rules, clean IP, TLS tests, WireGuard noise overrides, chains, automatic selection, proxy mode and LAN sharing do not apply. Saved preferences are preserved.</string>
     <string name="engine_retired">OpenConnect has been removed. This saved profile can be deleted; it cannot connect or be converted automatically.</string>
     <string name="engine_setting_inactive">This setting does not apply to the selected engine. Your saved preference is preserved.</string>
     <string name="engine_profile_settings">From engine profile</string>
     <string name="engine_effective_settings">Effective settings · %1$s\n%2$s</string>
-    <string name="engine_mihomo_settings">Mihomo uses WhiteVPN routing, DNS, app selection, sharing, chains and automatic selection. WireGuard noise overrides affect WireGuard profiles only; they are separate from the AmneziaWG engine.</string>
+    <string name="engine_mihomo_settings">Mihomo uses GigaVPN routing, DNS, app selection, sharing, chains and automatic selection. WireGuard noise overrides affect WireGuard profiles only; they are separate from the AmneziaWG engine.</string>
     <string name="engine_test_settings_note">Engine probes use the saved timeout and download size. Engine startup has a separate bootstrap timeout. Parallel-test count applies to subscription tests; engine tests run one at a time. Native tests require the matching active VPN.</string>
     <string name="engine_choose_vpn_access">Choose VPN access in connection settings before selecting this engine. Your saved preferences are preserved.</string>
     <string name="engine_import_file">Import configuration file</string>

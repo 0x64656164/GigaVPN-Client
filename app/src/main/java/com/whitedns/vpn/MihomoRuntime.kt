@@ -1086,7 +1086,7 @@ internal class MihomoRuntimeConfigBuilder(private val context: Context) {
                         append("  - ${yamlSingleQuoted("MATCH,$requiredRoutingTarget")}\n\n")
                     }
                 }
-                append("# WhiteDNS Android runtime overrides\n")
+                append("# GigaVPN Android runtime overrides\n")
                 append("mixed-port: ${MihomoRuntimeDefaults.MIXED_PORT}\n")
                 append("external-controller: ${MihomoRuntimeDefaults.CONTROLLER_HOST}:$controlPort\n")
                 append("secret: \"${secret}\"\n")
@@ -1234,7 +1234,7 @@ object MihomoAutomaticRoutingBridge {
         val blocks = parseGroupBlocks(lines)
         val summary = runCatching { MihomoConfigParser.parseSummary(rawYaml) }.getOrNull()
             ?: return result(rawYaml, reason = "invalid-config")
-        val rawTrafficBlocks = blocks.filter { it.name?.contains("WhiteDNS Proxy", ignoreCase = true) == true }
+        val rawTrafficBlocks = blocks.filter { it.name?.contains("GigaVPN Proxy", ignoreCase = true) == true }
         if (rawTrafficBlocks.size > 1) {
             return result(rawYaml, reason = "root-layout-ambiguous")
         }

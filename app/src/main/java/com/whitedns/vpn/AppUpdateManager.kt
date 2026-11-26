@@ -81,7 +81,7 @@ class AppUpdateManager(context: Context) {
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setVisibleInDownloadsUi(false)
                 .setDestinationInExternalFilesDir(context, "updates", "download.apk")
-                .addRequestHeader("User-Agent", "WhiteVPN/${BuildConfig.VERSION_NAME}")
+                .addRequestHeader("User-Agent", "GigaVPN/${BuildConfig.VERSION_NAME}")
             val id = downloads.enqueue(request)
             try {
                 savePending(PendingDownload(id, release, digest))
@@ -292,8 +292,12 @@ class AppUpdateManager(context: Context) {
     }
 
     private fun releaseJson(release: AppRelease): JSONObject {
-        val variant = ApkVariant.entries.singleOrNull {
-            release.apk?.name == "WhiteVPN-V${AppUpdatePolicy.normalizedVersion(release.version)}-${it.suffix}.apk"
+        val version = AppUpdatePolicy.normalizedVersion(release.version)
+        val variant = when (release.apk?.name) {
+            "GigaVPN.apk" -> ApkVariant.Universal
+            else -> ApkVariant.entries.singleOrNull {
+                release.apk?.name == "GigaVPN-V$version-${it.suffix}.apk"
+            }
         }
         val assets = JSONArray()
         listOfNotNull(release.apk, release.checksums).forEach {
