@@ -9,6 +9,7 @@ class AppLanguageTest {
     fun storedLanguageTagsResolveAndDefaultToPersian() {
         assertEquals(AppLanguage.English, AppLanguage.fromLanguageTag("en"))
         assertEquals(AppLanguage.Persian, AppLanguage.fromLanguageTag("fa"))
+        assertEquals(AppLanguage.Russian, AppLanguage.fromLanguageTag("ru"))
         assertEquals(AppLanguage.Persian, AppLanguage.fromLanguageTag(null))
     }
 

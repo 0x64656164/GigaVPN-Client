@@ -14,6 +14,7 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.nio.file.Files
 import java.security.cert.CertPathValidatorException
+import java.util.Base64
 import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -135,7 +136,7 @@ class MihomoRuntimeConfigBuilderTest {
     }
 
     @Test
-    fun corePatchExposesAuthenticatedProxyOnlyWhenLanSharingIsEnabled() {
+    fun corePatchRequiresAuthenticationWithoutAnyLoopbackBypass() {
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
             appName = "GigaVPN",
             secret = "secret-123",
@@ -146,7 +147,7 @@ class MihomoRuntimeConfigBuilderTest {
         assertTrue(patch.getBoolean("allow-lan"))
         assertEquals("0.0.0.0", patch.getString("bind-address"))
         assertEquals("whitedns:safe-password", patch.getJSONArray("authentication").getString(0))
-        assertEquals("127.0.0.0/8", patch.getJSONArray("skip-auth-prefixes").getString(0))
+        assertFalse(patch.has("skip-auth-prefixes"))
         assertEquals(
             listOf("127.0.0.0/8", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "100.64.0.0/10"),
             (0 until patch.getJSONArray("lan-allowed-ips").length()).map {
@@ -156,8 +157,8 @@ class MihomoRuntimeConfigBuilderTest {
     }
 
     @Test
-    fun lanSharingCanRunWithoutAuthentication() {
-        val settings = LanSharingSettings(enabled = true, passwordRequired = false)
+    fun legacyWithoutPasswordFlagStillAuthenticatesTheLocalProxy() {
+        val settings = LanSharingSettings(enabled = true, passwordRequired = false, password = "safe-password")
         val patch = MihomoRuntimeConfigBuilder.corePatchJson(
             appName = "GigaVPN",
             secret = "secret-123",
@@ -172,12 +173,12 @@ class MihomoRuntimeConfigBuilderTest {
 
         assertTrue(patch.getBoolean("allow-lan"))
         assertEquals("0.0.0.0", patch.getString("bind-address"))
-        assertFalse(patch.has("authentication"))
+        assertEquals("whitedns:safe-password", patch.getJSONArray("authentication").getString(0))
         assertFalse(patch.has("skip-auth-prefixes"))
         assertTrue(patch.has("lan-allowed-ips"))
         assertTrue(yaml.contains("allow-lan: true"))
         assertTrue(yaml.contains("bind-address: 0.0.0.0"))
-        assertFalse(yaml.contains("authentication:"))
+        assertTrue(yaml.contains("authentication:\n  - 'whitedns:safe-password'"))
         assertFalse(yaml.contains("skip-auth-prefixes:"))
         assertTrue(yaml.contains("lan-allowed-ips:"))
     }
@@ -316,10 +317,22 @@ class MihomoRuntimeConfigBuilderTest {
         assertTrue(runtimeYaml.contains("allow-lan: true"))
         assertTrue(runtimeYaml.contains("bind-address: 0.0.0.0"))
         assertTrue(runtimeYaml.contains("authentication:\n  - 'whitedns:safe-password'"))
-        assertTrue(runtimeYaml.contains("skip-auth-prefixes:\n  - 127.0.0.0/8"))
+        assertFalse(runtimeYaml.contains("skip-auth-prefixes:"))
         assertTrue(runtimeYaml.contains("lan-allowed-ips:"))
         assertTrue(runtimeYaml.contains("  - 100.64.0.0/10"))
         assertTrue(runtimeYaml.contains("tun:\n  enable: false"))
+    }
+
+    @Test
+    fun localProxyAuthUsesLanCredentialsForInternalProbes() {
+        assertNull(LocalProxyAuth.authorizationHeader(LanSharingSettings(password = "")))
+        assertEquals(
+            "Basic " + Base64.getEncoder().encodeToString(
+                "whitedns:safe-password".toByteArray(Charsets.UTF_8),
+            ),
+            LocalProxyAuth.authorizationHeader(LanSharingSettings(password = "safe-password")),
+        )
+
     }
 
     @Test

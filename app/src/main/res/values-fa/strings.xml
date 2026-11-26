@@ -39,6 +39,7 @@
     <string name="language_dialog_title">زبان</string>
     <string name="language_english">English</string>
     <string name="language_persian">فارسی</string>
+    <string name="language_russian">Русский</string>
     <string name="language_section">زبان</string>
     <string name="language_setting_title">زبان برنامه</string>
     <string name="language_setting_detail">زبان مورد استفاده در همه بخش‌های GigaVPN را انتخاب کنید.</string>
@@ -64,6 +65,8 @@
     <string name="access_token_invalid">توکن نامعتبر است. آن را از ربات GigaVPN کپی کنید.</string>
     <string name="access_token_failed">بارگذاری اشتراک ممکن نشد. توکن و اتصال اینترنت را بررسی کنید.</string>
     <string name="access_token_added">GigaVPN فعال شد: %1$s</string>
+    <string name="gigavpn_private_active">توکن دسترسی شما فعال است</string>
+    <string name="gigavpn_private_token_required">قبل از اتصال، توکن دسترسی خود را وارد کنید</string>
     <string name="subscription_scan_qr">اسکن کد QR</string>
     <string name="subscription_scan_qr_prompt">کد QR سابسکریپشن یا کانفیگ را اسکن کنید</string>
     <string name="subscription_from_clipboard">از کلیپ‌بورد</string>
@@ -338,6 +341,7 @@
     <string name="lan_sharing_manual_setup">پروکسی را روی هر دستگاه دستی تنظیم کنید. جداسازی کاربران وای‌فای یا برنامه‌هایی که پروکسی را نادیده می‌گیرند ممکن است مانع اتصال شود.</string>
     <string name="lan_sharing_local_endpoint">برنامه‌های همین گوشی\n127.0.0.1:%1$d · HTTP / SOCKS5\nرمز عبور: لازم نیست</string>
     <string name="lan_sharing_details">%1$s\n\nدستگاه‌های دیگر در شبکه\n%2$s</string>
+    <string name="lan_sharing_details_private">دستگاه‌های دیگر در شبکه\n%1$s</string>
     <string name="lan_sharing_no_address">آدرس خصوصی شبکه پیدا نشد. به وای‌فای وصل شوید یا هات‌اسپات را روشن کنید.</string>
     <string name="lan_sharing_endpoint">%1$s:%2$d · HTTP / SOCKS5</string>
     <string name="lan_sharing_credentials">%1$s\nنام کاربری: %2$s\nرمز عبور: %3$s</string>

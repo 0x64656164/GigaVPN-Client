@@ -21,7 +21,12 @@ object ConnectionModePolicy {
 class ConnectionModePreferenceStore(context: Context) {
     private val prefs = context.getSharedPreferences("white_dns_connection_mode", Context.MODE_PRIVATE)
 
-    fun read(): ConnectionMode = ConnectionMode.fromWireName(prefs.getString(KEY_MODE, null))
+    /**
+     * GigaVPN only supports the Android VPN tunnel. Proxy mode is retired so
+     * device apps cannot silently use the local proxy; existing saved values
+     * are ignored and normalized to VPN.
+     */
+    fun read(): ConnectionMode = ConnectionMode.Vpn
 
     fun save(mode: ConnectionMode) {
         prefs.edit().putString(KEY_MODE, mode.wireName).apply()

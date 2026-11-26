@@ -15,7 +15,7 @@ class VpnServicePolicyTest {
         assertEquals(
             SubscriptionStore.BUILT_IN_SUBSCRIPTION_IDS,
             BuiltInSubscriptionStartupPolicy.sourceIds(
-                SubscriptionStore.PUBLIC_SUBSCRIPTION_ID,
+                SubscriptionStore.PRIVATE_SUBSCRIPTION_ID,
                 explicitProfile = null,
             ),
         )
@@ -35,9 +35,9 @@ class VpnServicePolicyTest {
             outboundJson = "{}",
         )
         assertEquals(
-            listOf(SubscriptionStore.PUBLIC_SUBSCRIPTION_ID),
+            listOf(SubscriptionStore.PRIVATE_SUBSCRIPTION_ID),
             BuiltInSubscriptionStartupPolicy.sourceIds(
-                SubscriptionStore.PUBLIC_SUBSCRIPTION_ID,
+                SubscriptionStore.PRIVATE_SUBSCRIPTION_ID,
                 explicit,
             ),
         )

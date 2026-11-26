@@ -21,9 +21,13 @@ data class LanSharingSettings(
 class LanSharingPreferenceStore(context: Context) {
     private val prefs = context.getSharedPreferences("white_dns_lan_sharing", Context.MODE_PRIVATE)
 
+    /**
+     * GigaVPN never exposes an unauthenticated proxy: the loopback listener stays
+     * internal to the app and LAN clients must always present the generated credentials.
+     */
     fun read(): LanSharingSettings = LanSharingSettings(
         enabled = prefs.getBoolean(KEY_ENABLED, false),
-        passwordRequired = prefs.getBoolean(KEY_PASSWORD_REQUIRED, true),
+        passwordRequired = true,
         password = password(),
     )
 
@@ -32,7 +36,8 @@ class LanSharingPreferenceStore(context: Context) {
     }
 
     fun savePasswordRequired(required: Boolean) {
-        prefs.edit().putBoolean(KEY_PASSWORD_REQUIRED, required).apply()
+        // Kept for compatibility; GigaVPN always requires credentials.
+        prefs.edit().putBoolean(KEY_PASSWORD_REQUIRED, true).apply()
     }
 
     fun regeneratePassword(): String = LanSharingPassword.generate().also { password ->

@@ -90,7 +90,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Locale
-import java.text.DateFormat
+
 
 // GigaVPN access tokens are the opaque part of a Marzban /sub/ URL.
 private val GIGAVPN_TOKEN_REGEX = Regex("[A-Za-z0-9_-]{6,128}")
@@ -177,6 +177,8 @@ open class MainActivity : Activity() {
     private lateinit var connectionChainPreferenceStore: ConnectionChainPreferenceStore
     private lateinit var installedAppRepository: InstalledAppRepository
     private lateinit var userSubscriptionManager: UserSubscriptionManager
+    private lateinit var gigavpnTokenStore: GigaVPNTokenStore
+    private var pendingConnectAfterToken: Boolean = false
     private var privacyPolicyDialog: AlertDialog? = null
     private var connectionDelayTestListener: ((Intent) -> Unit)? = null
     private lateinit var appShellView: View
@@ -365,8 +367,10 @@ open class MainActivity : Activity() {
         delayFailureNetworkMonitor = DefaultNetworkMonitor(this)
         installedAppRepository = InstalledAppRepository(this)
         userSubscriptionManager = UserSubscriptionManager(this)
+        gigavpnTokenStore = GigaVPNTokenStore(this)
         connectFlowPending = savedInstanceState?.getBoolean(STATE_CONNECT_FLOW_PENDING) == true
         connectFlowAction = savedInstanceState?.getString(STATE_CONNECT_FLOW_ACTION) ?: Actions.CONNECT
+        pendingConnectAfterToken = savedInstanceState?.getBoolean(STATE_PENDING_CONNECT_AFTER_TOKEN) == true
         DiagnosticLogger.info(
             this,
             "activity.onCreate",
@@ -454,10 +458,9 @@ open class MainActivity : Activity() {
             )
             tabMode = TabLayout.MODE_FIXED
             tabGravity = TabLayout.GRAVITY_FILL
-            // Reorder tabs: Settings, VPN (center/active), Subscription
+            // GigaVPN has one route, so the profile list tab is gone: Settings and VPN only.
             addTab(newTab().setText(R.string.tab_settings).setIcon(R.drawable.ic_advanced_tab))
             addTab(newTab().setText(R.string.tab_vpn).setIcon(R.drawable.ic_vpn_tab), true)
-            addTab(newTab().setText(R.string.tab_subscriptions).setIcon(R.drawable.ic_subscriptions_tab))
             post {
                 val tabStrip = getChildAt(0) as? ViewGroup ?: return@post
                 for (index in 0 until tabStrip.childCount) {
@@ -471,11 +474,10 @@ open class MainActivity : Activity() {
             }
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                    // Map new tab order: 0=Settings, 1=VPN, 2=Subscriptions
+                    // Two-tab layout: 0=Settings, 1=VPN.
                     val mappedPosition = when (tab.position) {
-                        0 -> 2  // Settings -> position 2
-                        1 -> 1  // VPN -> position 1
-                        2 -> 0  // Subscriptions -> position 0
+                        0 -> 2
+                        1 -> 1
                         else -> tab.position
                     }
                     showAppTab(mappedPosition)
@@ -487,6 +489,7 @@ open class MainActivity : Activity() {
             })
         }
         appTabs = tabs
+        showAppTab(1)
         val tabsHost = FrameLayout(this).apply {
             setBackgroundColor(Color.TRANSPARENT)
             setPadding(dp(18), 0, dp(18), dp(18))
@@ -695,9 +698,6 @@ open class MainActivity : Activity() {
     private fun renderSubscriptions() {
         if (!::subscriptionsList.isInitialized) return
         subscriptionsList.removeAllViews()
-        val store = SubscriptionStore(this)
-        val selectedId = store.readSelectedSubscriptionId()
-        val selectedEngine = EngineProfileStore(this).selectedEngineId()
         val selectedName = selectedSubscriptionName()
         homeSubscriptionSelectorRow.setValue(selectedName)
         homeSubscriptionSelectorRow.contentDescription =
@@ -715,93 +715,22 @@ open class MainActivity : Activity() {
                     selectedName,
                 )
         }
-        SubscriptionStore.BUILT_IN_SUBSCRIPTION_IDS.forEachIndexed { index, subscriptionId ->
-            val name = builtInSubscriptionName(subscriptionId)
-            val count = store.readCatalog(subscriptionId)?.profiles?.size ?: 0
-            subscriptionsList.addView(
-                subscriptionCard(
-                    title = name,
-                    detail = getString(R.string.subscription_builtin_detail, connectionCountLabel(count)),
-                    selected = selectedEngine == null && selectedId == subscriptionId,
-                    error = "",
-                    onTestConnections = { openSubscriptionConnectionTesting(subscriptionId) },
-                    actions = listOf(
-                        R.string.subscription_action_select to {
-                            userSubscriptionManager.select(subscriptionId)
-                            onSubscriptionSelected()
-                        },
-                        R.string.subscription_action_refresh to {
-                            refreshBuiltInSubscription(subscriptionId, name)
-                        },
-                    ),
+        // No selectable profile list: the app only exposes the single GigaVPN Private route.
+        val tokenActive = gigavpnTokenStore.hasToken()
+        subscriptionsList.removeAllViews()
+        subscriptionsList.addView(
+            subscriptionCard(
+                title = getString(R.string.subscription_private_name),
+                detail = getString(
+                    if (tokenActive) R.string.gigavpn_private_active
+                    else R.string.gigavpn_private_token_required,
                 ),
-                LinearLayout.LayoutParams(-1, -2).apply {
-                    if (index > 0) topMargin = dp(8)
-                },
-            )
-        }
-        userSubscriptionManager.list().forEach { item ->
-            val updated = item.updatedAt.takeIf { it > 0 }?.let {
-                DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(it)
-            } ?: getString(R.string.subscription_never_updated)
-            subscriptionsList.addView(
-                subscriptionCard(
-                    title = item.name,
-                    detail = getString(
-                        R.string.subscription_detail,
-                        item.format.label,
-                        connectionCountLabel(item.connectionCount),
-                        updated,
-                    ),
-                    selected = selectedEngine == null && selectedId == item.id,
-                    error = localizedSubscriptionError(item.lastError),
-                    onTestConnections = { openSubscriptionConnectionTesting(item.id) },
-                    actions = listOf(
-                        R.string.subscription_action_select to {
-                            userSubscriptionManager.select(item.id)
-                            onSubscriptionSelected()
-                        },
-                        R.string.subscription_action_edit to { showEditSubscriptionDialog(item) },
-                        R.string.subscription_action_refresh to { refreshSubscription(item) },
-                        R.string.subscription_action_delete to { confirmDeleteSubscription(item) },
-                    ),
-                ),
-                LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) },
-            )
-        }
-        val engineProfiles = runCatching { EngineProfileStore(this).profiles() }.getOrElse { error ->
-            DiagnosticLogger.warn(this, "engine.profiles.readFailed", error = error)
-            emptyList()
-        }
-        engineProfiles.forEach { profile ->
-            val unavailable = engineProfilesUi.unavailableReason(profile)
-            subscriptionsList.addView(
-                subscriptionCard(
-                    title = profile.name,
-                    detail = profile.kind.title + " · " + getString(
-                        if (profile.kind.socks) R.string.profile_tcp_route else R.string.profile_vpn_route,
-                    ),
-                    selected = selectedEngine == profile.id,
-                    error = unavailable?.let(::getString).orEmpty(),
-                    onTestConnections = { engineProfilesUi.showTests(profile) },
-                    actions = listOf(
-                        R.string.subscription_action_select to { engineProfilesUi.select(profile) },
-                        R.string.engine_edit to { engineProfilesUi.editProfile(profile) },
-                        R.string.engine_delete to { engineProfilesUi.deleteProfile(profile) },
-                    ),
-                ),
-                LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) },
-            )
-        }
-        if (selectedEngine != null && engineProfiles.none { it.id == selectedEngine }) {
-            subscriptionsList.addView(
-                TextView(this).apply {
-                    setText(R.string.engine_missing_profile)
-                    setTextColor(TEXT_SECONDARY)
-                },
-                LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) },
-            )
-        }
+                selected = true,
+                error = "",
+                onTestConnections = {},
+                actions = listOf(R.string.access_token_add_button to { showAccessTokenDialog() }),
+            ),
+        )
         renderHomeConnectionRows()
     }
 
@@ -1039,8 +968,9 @@ open class MainActivity : Activity() {
      * The subscription base URL comes from assets/config/app_config.json and is
      * combined with the token, then handed to the existing profile resolver.
      */
-    private fun showAccessTokenDialog() {
+    private fun showAccessTokenDialog(onActivated: () -> Unit = {}) {
         val tokenInput = TextInputEditText(this).apply {
+            setText(gigavpnTokenStore.read().orEmpty())
             setSingleLine(true)
             layoutDirection = View.LAYOUT_DIRECTION_LTR
             textDirection = View.TEXT_DIRECTION_LTR
@@ -1102,16 +1032,17 @@ open class MainActivity : Activity() {
                         }
                     }
                     result.onSuccess { item ->
+                        gigavpnTokenStore.save(token)
                         dialog.dismiss()
                         renderSubscriptions()
                         renderConnectionDetails(buttonModel.state)
-                        appTabs.getTabAt(0)?.select()
                         refreshLocationOptions()
                         Toast.makeText(
                             this@MainActivity,
                             getString(R.string.access_token_added, connectionCountLabel(item.connectionCount)),
                             Toast.LENGTH_SHORT,
                         ).show()
+                        onActivated()
                     }.onFailure { error ->
                         DiagnosticLogger.warn(this@MainActivity, "gigavpn.activation.failed", error = error)
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
@@ -1652,6 +1583,7 @@ open class MainActivity : Activity() {
         outState.putString(STATE_CHAIN_PICKER_SUBSCRIPTION, activeChainPickerSubscriptionId)
         outState.putBoolean(STATE_CONNECT_FLOW_PENDING, connectFlowPending)
         outState.putString(STATE_CONNECT_FLOW_ACTION, connectFlowAction)
+        outState.putBoolean(STATE_PENDING_CONNECT_AFTER_TOKEN, pendingConnectAfterToken)
         super.onSaveInstanceState(outState)
     }
 
@@ -1720,7 +1652,7 @@ open class MainActivity : Activity() {
             DiagnosticLogger.warn(this, "permission.vpn", "denied resultCode=$resultCode")
             AnalyticsEvents.connectionTryFailed(this)
             if (pendingAction == Actions.RECONNECT) {
-                connectionModePreferenceStore.save(ConnectionMode.Proxy)
+                connectionModePreferenceStore.save(ConnectionMode.Vpn)
                 buttonModel.onStateChanged(VpnState.Started)
                 renderState(VpnState.Started)
             } else {
@@ -1897,19 +1829,11 @@ open class MainActivity : Activity() {
             minimumHeight = dp(52)
             setPadding(dp(4), dp(4), dp(4), dp(4))
             addView(vpnModeButton, LinearLayout.LayoutParams(0, dp(44), 1f))
-            addView(proxyModeButton, LinearLayout.LayoutParams(0, dp(44), 1f))
-            check(
-                if (connectionModePreferenceStore.read() == ConnectionMode.Proxy) {
-                    proxyModeButton.id
-                } else {
-                    vpnModeButton.id
-                },
-            )
-            addOnButtonCheckedListener { _, checkedId, isChecked ->
+            proxyModeButton.visibility = View.GONE
+            check(vpnModeButton.id)
+            addOnButtonCheckedListener { _, _, isChecked ->
                 if (isChecked && isEnabled) {
-                    saveConnectionMode(
-                        if (checkedId == proxyModeButton.id) ConnectionMode.Proxy else ConnectionMode.Vpn,
-                    )
+                    saveConnectionMode(ConnectionMode.Vpn)
                 }
             }
         }
@@ -2201,7 +2125,7 @@ open class MainActivity : Activity() {
                 getString(R.string.subscriptions_title),
                 subscriptionName,
             )
-            setOnRowClickListener { showSubscriptionSelectorMenu(this) }
+            setOnRowClickListener { showAccessTokenDialog() }
         }
         homeFragmentSelectorRow = DashboardDataRowView(this).apply {
             setRow(getString(R.string.fragments_section), "")
@@ -2358,8 +2282,7 @@ open class MainActivity : Activity() {
         settingsSubscriptionSelectorRow = appPreferenceRow(
             R.string.settings_subscription_title,
             selectedSubscriptionName(),
-            ::showSubscriptionSelectorMenu,
-        )
+        ) { showAccessTokenDialog() }
         val themeSelectorRow = appPreferenceRow(
             R.string.theme_dialog_title,
             getString(appThemePreferenceStore.read().labelRes),
@@ -3306,18 +3229,12 @@ open class MainActivity : Activity() {
             ),
             LinearLayout.LayoutParams(-1, -2),
         )
+        // Credentials are mandatory on every proxy listener; no user-facing toggle.
         lanSharingPasswordCheckbox = MaterialSwitch(this).apply {
+            visibility = View.GONE
+            isChecked = true
             contentDescription = getString(R.string.lan_sharing_require_password)
-            setOnClickListener { saveLanSharingPasswordRequired(isChecked) }
         }
-        lanSharingPanel.addView(
-            advancedToggleRow(
-                title = getString(R.string.lan_sharing_require_password),
-                detail = getString(R.string.lan_sharing_require_password_description),
-                toggle = lanSharingPasswordCheckbox,
-            ),
-            LinearLayout.LayoutParams(-1, -2),
-        )
         lanSharingPanel.addView(
             advancedSectionDetail(getString(R.string.lan_sharing_manual_setup)),
             LinearLayout.LayoutParams(-1, -2).apply {
@@ -4618,8 +4535,8 @@ open class MainActivity : Activity() {
             Actions.CONNECT -> {
                 if (!commitFrontingIpInput(reconnectIfChanged = false, focusOnError = true)) return
                 if (!commitDnsPrivacyEndpoint(reconnectIfChanged = false, focusOnError = true)) return
-                if (showPrivacyPolicyIfNeeded { beginConnectFlow() }) return
-                beginConnectFlow()
+                if (showPrivacyPolicyIfNeeded { continueConnectWithTokenOrStart() }) return
+                continueConnectWithTokenOrStart()
             }
             Actions.DISCONNECT -> {
                 connectFlowPending = false
@@ -7080,18 +6997,14 @@ open class MainActivity : Activity() {
     }
 
     private fun saveConnectionMode(mode: ConnectionMode) {
-        if (connectionModePreferenceStore.read() == mode) return
-        connectionModePreferenceStore.save(mode)
-        DiagnosticLogger.info(this, "activity.connectionMode.saved", "mode=${mode.wireName}")
+        // Proxy mode is no longer offered: GigaVPN always routes through the VPN tunnel.
+        val normalized = ConnectionMode.Vpn
+        if (connectionModePreferenceStore.read() == normalized) return
+        connectionModePreferenceStore.save(normalized)
+        DiagnosticLogger.info(this, "activity.connectionMode.saved", "mode=${normalized.wireName}")
         renderLanSharingControls(settingsEnabled = true)
         if (buttonModel.state != VpnState.Started) return
-        if (mode == ConnectionMode.Vpn) {
-            beginConnectFlow(Actions.RECONNECT)
-        } else {
-            buttonModel.onStateChanged(VpnState.Starting)
-            renderState(VpnState.Starting)
-            startVpnService(Actions.RECONNECT)
-        }
+        beginConnectFlow(Actions.RECONNECT)
     }
 
     private fun saveLanSharingPasswordRequired(required: Boolean) {
@@ -7121,17 +7034,16 @@ open class MainActivity : Activity() {
 
     private fun renderLanSharingControls(settingsEnabled: Boolean) {
         val settings = lanSharingPreferenceStore.read()
-        val selectedMode = connectionModePreferenceStore.read()
-        val usesVpnTunnel = ConnectionModePolicy.shouldStartTun(selectedMode, alwaysOnMode, lockdownMode)
         if (::connectionModeGroup.isInitialized) {
             val modeSelectionEnabled = settingsEnabled && !alwaysOnMode && !lockdownMode
             connectionModeGroup.isEnabled = modeSelectionEnabled
             vpnModeButton.isEnabled = modeSelectionEnabled
-            proxyModeButton.isEnabled = modeSelectionEnabled
-            val selectedId = if (usesVpnTunnel) vpnModeButton.id else proxyModeButton.id
-            if (connectionModeGroup.checkedButtonId != selectedId) connectionModeGroup.check(selectedId)
+            proxyModeButton.visibility = View.GONE
+            if (connectionModeGroup.checkedButtonId != vpnModeButton.id) {
+                connectionModeGroup.check(vpnModeButton.id)
+            }
         }
-        renderDashboardLocalEndpoint(if (usesVpnTunnel) ConnectionMode.Vpn else ConnectionMode.Proxy)
+        renderDashboardLocalEndpoint(ConnectionMode.Vpn)
         if (::lanSharingCheckbox.isInitialized) {
             val details = lanSharingDetails(settings)
             lanSharingCheckbox.isChecked = settings.enabled
@@ -7154,10 +7066,6 @@ open class MainActivity : Activity() {
     }
 
     private fun lanSharingDetails(settings: LanSharingSettings): String {
-        val localEndpoint = getString(
-            R.string.lan_sharing_local_endpoint,
-            MihomoRuntimeDefaults.MIXED_PORT,
-        )
         val addresses = LanSharingAddresses.reachablePrivateIpv4Addresses()
         val endpoints = if (addresses.isEmpty()) {
             getString(R.string.lan_sharing_no_address)
@@ -7171,7 +7079,8 @@ open class MainActivity : Activity() {
         } else {
             getString(R.string.lan_sharing_no_credentials, endpoints)
         }
-        return getString(R.string.lan_sharing_details, localEndpoint, lanEndpoints)
+        // The loopback proxy is internal; only authenticated LAN clients are shown to users.
+        return getString(R.string.lan_sharing_details_private, lanEndpoints)
     }
 
     private fun saveFragmentsEnabled(enabled: Boolean) {
@@ -7961,6 +7870,24 @@ open class MainActivity : Activity() {
         applyEngineSettingsPolicy(settingsEnabled)
     }
 
+    /**
+     * The app has a single route: GigaVPN Private. If no access token has been
+     * activated yet, ask for it before starting the VPN permission flow.
+     */
+    private fun continueConnectWithTokenOrStart() {
+        if (gigavpnTokenStore.hasToken()) {
+            pendingConnectAfterToken = false
+            beginConnectFlow()
+            return
+        }
+        pendingConnectAfterToken = true
+        showAccessTokenDialog(onActivated = {
+            if (!pendingConnectAfterToken) return@showAccessTokenDialog
+            pendingConnectAfterToken = false
+            beginConnectFlow()
+        })
+    }
+
     private fun beginConnectFlow(action: String = Actions.CONNECT) {
         connectFlowPending = true
         connectFlowAction = action
@@ -8402,6 +8329,7 @@ open class MainActivity : Activity() {
         const val STATE_CHAIN_PICKER_SUBSCRIPTION = "chain_picker_subscription"
         const val STATE_CONNECT_FLOW_PENDING = "connect_flow_pending"
         const val STATE_CONNECT_FLOW_ACTION = "connect_flow_action"
+        const val STATE_PENDING_CONNECT_AFTER_TOKEN = "pending_connect_after_token"
         const val SUBSCRIPTION_ITEM_ID_BASE = 200
     }
 }

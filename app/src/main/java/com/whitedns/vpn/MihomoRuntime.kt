@@ -833,7 +833,9 @@ internal class MihomoRuntimeConfigBuilder(private val context: Context) {
         document = MihomoRuntimeDocument(
             rawYaml = plan.rawYaml,
             splitTunnelPlan = SplitTunnelRuntimePlan.off(),
-            lanSharing = LanSharingSettings(),
+            // Isolated engine tests never share VPN over LAN, but they still use the
+            // authenticated local proxy for their own HTTPS probes.
+            lanSharing = LanSharingPreferenceStore(context).read().copy(enabled = false),
             routingMode = plan.routingMode,
             dns = plan.dns,
             selectedMap = emptyMap(),
@@ -845,6 +847,7 @@ internal class MihomoRuntimeConfigBuilder(private val context: Context) {
         document: MihomoRuntimeDocument,
         secret: String,
     ): MihomoRuntimePaths {
+        LocalProxyAuth.configure(document.lanSharing)
         val baseDir = File(context.filesDir, "mihomo").apply { mkdirs() }
         val cacheDir = File(context.cacheDir, "mihomo").apply { mkdirs() }
         val runtimeConfigYaml = File(baseDir, "config.yaml")
@@ -946,12 +949,12 @@ internal class MihomoRuntimeConfigBuilder(private val context: Context) {
                 .put("secret", secret)
                 .put("allow-lan", lanSharing.enabled)
                 .apply {
+                    // The mixed proxy on loopback is authenticated too: no skip-auth-prefixes.
+                    LocalProxyAuth.credential(lanSharing)?.let { credential ->
+                        put("authentication", JSONArray(listOf(credential)))
+                    }
                     if (lanSharing.enabled) {
                         put("bind-address", "0.0.0.0")
-                        if (lanSharing.passwordRequired) {
-                            put("authentication", JSONArray(listOf("${lanSharing.username}:${lanSharing.password}")))
-                            put("skip-auth-prefixes", JSONArray(listOf("127.0.0.0/8")))
-                        }
                         put("lan-allowed-ips", JSONArray(LAN_ALLOWED_IPS))
                     }
                 }
@@ -1091,14 +1094,13 @@ internal class MihomoRuntimeConfigBuilder(private val context: Context) {
                 append("external-controller: ${MihomoRuntimeDefaults.CONTROLLER_HOST}:$controlPort\n")
                 append("secret: \"${secret}\"\n")
                 append("allow-lan: ${lanSharing.enabled}\n")
+                // Loopback clients need credentials as well; there is no skip-auth-prefixes entry.
+                LocalProxyAuth.credential(lanSharing)?.let { credential ->
+                    append("authentication:\n")
+                    append("  - ${yamlSingleQuoted(credential)}\n")
+                }
                 if (lanSharing.enabled) {
                     append("bind-address: 0.0.0.0\n")
-                    if (lanSharing.passwordRequired) {
-                        append("authentication:\n")
-                        append("  - ${yamlSingleQuoted("${lanSharing.username}:${lanSharing.password}")}\n")
-                        append("skip-auth-prefixes:\n")
-                        append("  - 127.0.0.0/8\n")
-                    }
                     append("lan-allowed-ips:\n")
                     LAN_ALLOWED_IPS.forEach { append("  - $it\n") }
                 }
@@ -2712,7 +2714,7 @@ object MihomoRuntimeHealth {
             Proxy.Type.HTTP,
             InetSocketAddress(MihomoRuntimeDefaults.CONTROLLER_HOST, MihomoRuntimeDefaults.MIXED_PORT),
         )
-        return httpStatus(url, proxy, timeoutMs)
+        return httpStatus(url, proxy, timeoutMs, authenticateLocalProxy = true)
     }
 
     fun httpStatusThroughSocksProxy(
@@ -2732,7 +2734,9 @@ object MihomoRuntimeHealth {
             Proxy.Type.HTTP,
             InetSocketAddress(MihomoRuntimeDefaults.CONTROLLER_HOST, MihomoRuntimeDefaults.MIXED_PORT),
         )
-        return egressCountryCode { url -> url.openConnection(proxy) as HttpURLConnection }
+        return egressCountryCode { url ->
+            (url.openConnection(proxy) as HttpURLConnection).also(LocalProxyAuth::apply)
+        }
     }
 
     internal fun egressCountryCode(openConnection: (URL) -> HttpURLConnection): String? =
@@ -2764,6 +2768,7 @@ object MihomoRuntimeHealth {
         val connection = URL(
             "${MihomoRuntimeDefaults.SPEED_TEST_URL_PREFIX}$targetBytes",
         ).openConnection(proxy) as HttpURLConnection
+        LocalProxyAuth.apply(connection)
         connection.connectTimeout = timeoutMs
         connection.readTimeout = timeoutMs
         connection.instanceFollowRedirects = false
@@ -2823,8 +2828,14 @@ object MihomoRuntimeHealth {
             ?.takeIf { it == "XK" || it in java.util.Locale.getISOCountries() }
     }
 
-    private fun httpStatus(url: String, proxy: Proxy, timeoutMs: Int): Int {
+    private fun httpStatus(
+        url: String,
+        proxy: Proxy,
+        timeoutMs: Int,
+        authenticateLocalProxy: Boolean = false,
+    ): Int {
         val connection = URL(url).openConnection(proxy) as HttpURLConnection
+        if (authenticateLocalProxy) LocalProxyAuth.apply(connection)
         connection.connectTimeout = timeoutMs
         connection.readTimeout = timeoutMs
         connection.instanceFollowRedirects = false

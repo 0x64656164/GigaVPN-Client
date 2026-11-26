@@ -427,12 +427,10 @@ class SubscriptionStore(private val context: Context) {
 
     companion object {
         const val PRIVATE_SUBSCRIPTION_ID = "whitevpn-private"
+        // Retained only for legacy snapshot/cache migration; it is never a selectable source.
         const val PUBLIC_SUBSCRIPTION_ID = "whitedns"
-        val BUILT_IN_SUBSCRIPTION_IDS = listOfNotNull(
-            PRIVATE_SUBSCRIPTION_ID.takeIf { BuildConfig.PRIVATE_MIHOMO_SUBSCRIPTION_URL.isNotBlank() },
-            PUBLIC_SUBSCRIPTION_ID,
-        )
-        val DEFAULT_SUBSCRIPTION_ID = BUILT_IN_SUBSCRIPTION_IDS.first()
+        val BUILT_IN_SUBSCRIPTION_IDS = listOf(PRIVATE_SUBSCRIPTION_ID)
+        val DEFAULT_SUBSCRIPTION_ID = PRIVATE_SUBSCRIPTION_ID
         fun isBuiltInSubscription(id: String): Boolean = id in BUILT_IN_SUBSCRIPTION_IDS
 
         private const val PRIVATE_CATALOG_FILE = "private-subscription-catalog.json"

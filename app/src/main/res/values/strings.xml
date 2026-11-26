@@ -38,6 +38,7 @@
     <string name="language_dialog_title">Language</string>
     <string name="language_english">English</string>
     <string name="language_persian">فارسی</string>
+    <string name="language_russian">Русский</string>
     <string name="language_section">Language</string>
     <string name="language_setting_title">App language</string>
     <string name="language_setting_detail">Choose the language used throughout GigaVPN.</string>
@@ -71,6 +72,8 @@
     <string name="subscription_clipboard_empty">The clipboard does not contain a subscription or configuration.</string>
     <string name="subscription_builtin_detail">Built-in · %1$s</string>
     <string name="subscription_private_name">GigaVPN Private</string>
+    <string name="gigavpn_private_active">Your access token is active</string>
+    <string name="gigavpn_private_token_required">Enter your access token before connecting</string>
     <string name="subscription_public_name">GigaVPN Public fallback</string>
     <string name="subscription_detail">%1$s · %2$s · %3$s</string>
     <string name="subscription_never_updated">Never</string>
@@ -339,6 +342,7 @@
     <string name="lan_sharing_manual_setup">Configure the proxy manually on each client. Wi-Fi client isolation and apps that ignore proxy settings may prevent access.</string>
     <string name="lan_sharing_local_endpoint">Apps on this phone\n127.0.0.1:%1$d · HTTP / SOCKS5\nPassword: Not required</string>
     <string name="lan_sharing_details">%1$s\n\nOther devices on the LAN\n%2$s</string>
+    <string name="lan_sharing_details_private">Other devices on the LAN\n%1$s</string>
     <string name="lan_sharing_no_address">No private LAN address found. Connect Wi-Fi or start a hotspot.</string>
     <string name="lan_sharing_endpoint">%1$s:%2$d · HTTP / SOCKS5</string>
     <string name="lan_sharing_credentials">%1$s\nUsername: %2$s\nPassword: %3$s</string>

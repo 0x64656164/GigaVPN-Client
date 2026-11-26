@@ -46,7 +46,7 @@ val mihomoSubscriptionUrl = httpsBuildUrl(
 val privateMihomoSubscriptionUrl = (
     System.getenv("WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL")?.takeIf { it.isNotBlank() }
         ?: buildProperties.getProperty("privateMihomoSubscriptionUrl")?.takeIf { it.isNotBlank() }
-        ?: ""
+        ?: "https://gigavpn.example.com/sub/"
     ).also {
     require(it.isEmpty() || it.startsWith("https://")) {
         "WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL must use HTTPS"
@@ -75,11 +75,11 @@ android {
         minSdk = 26
         targetSdk = 35
         // Reserve the last digit for APK architecture. Increase by ten per release.
-        versionCode = 920
-        versionName = "1.8.2"
+        versionCode = 930
+        versionName = "1.8.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += listOf("en", "fa")
+        resourceConfigurations += listOf("en", "fa", "ru")
 
         buildConfigField("String", "MIHOMO_SUBSCRIPTION_URL", buildConfigStringLiteral(mihomoSubscriptionUrl))
         buildConfigField(

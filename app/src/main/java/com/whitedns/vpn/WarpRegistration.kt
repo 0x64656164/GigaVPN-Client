@@ -78,6 +78,7 @@ internal object WarpRegistration {
             Proxy.NO_PROXY
         }
         val connection = URL(REGISTER_URL).openConnection(proxy) as HttpURLConnection
+        if (viaLocalProxy) LocalProxyAuth.apply(connection)
         try {
             connection.requestMethod = "POST"
             connection.connectTimeout = TIMEOUT_MS

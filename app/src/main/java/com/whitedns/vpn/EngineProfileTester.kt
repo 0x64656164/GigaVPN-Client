@@ -52,7 +52,8 @@ internal object EngineProfileTester {
         }
     }
     suspend fun activeSocks(context: Context, speed: Boolean): String = measure(context, speed) { url ->
-        URL(url).openConnection(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", MihomoRuntimeDefaults.MIXED_PORT)))
+        val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", MihomoRuntimeDefaults.MIXED_PORT))
+        (URL(url).openConnection(proxy) as java.net.HttpURLConnection).also(LocalProxyAuth::apply)
     }
     suspend fun native(context: Context, speed: Boolean): String {
         val network = EngineNetworkProbe.ownedVpn(context) ?: error("Native VPN is unavailable")

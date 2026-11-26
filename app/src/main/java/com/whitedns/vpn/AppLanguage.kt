@@ -11,6 +11,7 @@ enum class AppLanguage(
 ) {
     Persian("fa", R.string.language_persian),
     English("en", R.string.language_english),
+    Russian("ru", R.string.language_russian),
     ;
 
     companion object {
