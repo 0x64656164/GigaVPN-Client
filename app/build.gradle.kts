@@ -150,6 +150,10 @@ android {
     sourceSets {
         getByName("main") {
             jniLibs.srcDir("src/main/jniLibs")
+            // GigaVPN: единственный конфиг подписки живёт в корне репозитория.
+            // Добавляем каталог как источник assets вместо копирования в исходники:
+            // так Gradle не видит конфликта между выходом задачи и lint/merge задачами.
+            assets.srcDir(rootProject.file("assets"))
         }
     }
 
@@ -195,20 +199,6 @@ dependencies {
 
     testImplementation("org.apache.sshd:sshd-core:2.15.0")
     testImplementation("junit:junit:4.13.2")
-}
-
-// GigaVPN: один конфигурационный файл на все сборки — assets/config/app_config.json.
-// Gradle копирует его в Android assets перед сборкой, поэтому смена эндпоинта подписки
-// не требует правки Kotlin-кода.
-tasks.register<Copy>("syncGigaVpnConfig") {
-    from(rootProject.file("assets/config/app_config.json"))
-    into(file("src/main/assets/config"))
-}
-
-tasks.matching { task ->
-    task.name.startsWith("merge") && task.name.endsWith("Assets")
-}.configureEach {
-    dependsOn("syncGigaVpnConfig")
 }
 
 val buildFlClashCore = tasks.register<Exec>("buildFlClashCore") {

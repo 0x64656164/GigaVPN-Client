@@ -12,7 +12,7 @@ Android-приложение на Kotlin + Android Views, Gradle (AGP), JDK 21, 
 | `android/app/build.gradle` → `applicationId` | `app/build.gradle.kts` → `applicationId = "com.gigavpn.client"` |
 | `pubspec.yaml` | отсутствует; имя/описание заданы в `settings.gradle.kts`, `README.md`, `strings.xml` |
 | `FlutterThemeData / ColorScheme` | `res/values/colors.xml`, `values-night/colors.xml`, `DashboardViews.kt`, `tokens.css` |
-| `assets/config/app_config.json` + `pubspec assets` | `assets/config/app_config.json` + Gradle-задача `syncGigaVpnConfig`, копирующая файл в `app/src/main/assets/config/` |
+| `assets/config/app_config.json` + `pubspec assets` | `assets/config/app_config.json` + `sourceSets` подключает корневой `assets/` как источник Android assets |
 | `flutter build apk --release --split-per-abi` | `./scripts/release.sh` → `:app:assembleRelease` с `splits.abi` (universal + 4 ABI) |
 | Java 17 | JDK **21** (AGP/compileSdk 36 требует 21; `sourceCompatibility` остаётся Java 17) |
 
@@ -39,6 +39,8 @@ Android-приложение на Kotlin + Android Views, Gradle (AGP), JDK 21, 
   больше не является основным входом.
 - **Обновления**: проверка GitHub Releases переведена на `0x64656164/GigaVPN-Client`;
   поддерживаются `GigaVPN.apk` (universal) и `GigaVPN-V<version>-<abi>.apk`.
+- **Тесты**: `WhiteDnsDesignTokensTest` обновлён под фиолетовую палитру GigaVPN — старые
+  проверки ожидали зелёный акцент WhiteDNS и падали в CI. Остальные 385 тестов проходят без правок.
 
 ## 3. Конфигурация подключения
 
@@ -50,9 +52,9 @@ Android-приложение на Kotlin + Android Views, Gradle (AGP), JDK 21, 
 }
 ```
 
-Перед пушем в `main` отредактируйте этот файл под свой домен. Gradle-задача
-`syncGigaVpnConfig` автоматически скопирует его в `app/src/main/assets/config/app_config.json`
-перед сборкой. Токен выдаёт Telegram-бот (раздел бота «Личный кабинет»).
+Перед пушем в `main` отредактируйте этот файл под свой домен. Каталог `assets/` подключён
+через `sourceSets` как ещё один источник Android assets, поэтому отдельная задача копирования
+не нужна. Токен выдаёт Telegram-бот (раздел бота «Личный кабинет»).
 
 ## 4. CI/CD
 
