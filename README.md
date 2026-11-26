@@ -61,7 +61,7 @@ Download the latest APK from [GitHub Releases](https://github.com/0x64656164/Gig
 
 ## Build
 
-Requirements: JDK 17, Go, Android SDK and Android NDK.
+Requirements: JDK 21, Go, Android SDK and Android NDK.
 
 ```bash
 ./scripts/build-flclash-core.sh
