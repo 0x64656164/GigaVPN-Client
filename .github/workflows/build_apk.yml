@@ -227,8 +227,8 @@ jobs:
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.3' }}
-          name: GigaVPN ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.3' }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.4' }}
+          name: GigaVPN ${{ github.ref_type == 'tag' && github.ref_name || 'v1.8.4' }}
           body: |
             Автоматическая сборка GigaVPN из GitHub Actions (${{ github.sha }}).
             - `GigaVPN.apk` — универсальная сборка (все ABI)

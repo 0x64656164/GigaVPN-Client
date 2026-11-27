@@ -75,11 +75,11 @@ android {
         minSdk = 26
         targetSdk = 35
         // Reserve the last digit for APK architecture. Increase by ten per release.
-        versionCode = 930
-        versionName = "1.8.3"
+        versionCode = 940
+        versionName = "1.8.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += listOf("en", "fa", "ru")
+        resourceConfigurations += listOf("en", "ru")
 
         buildConfigField("String", "MIHOMO_SUBSCRIPTION_URL", buildConfigStringLiteral(mihomoSubscriptionUrl))
         buildConfigField(
