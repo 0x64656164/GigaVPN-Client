@@ -37,7 +37,6 @@
 
     <string name="language_dialog_title">Язык</string>
     <string name="language_english">English</string>
-    <string name="language_persian">فارسی</string>
     <string name="language_russian">Русский</string>
     <string name="language_section">Язык</string>
     <string name="language_setting_title">Язык приложения</string>
@@ -48,7 +47,6 @@
     <string name="theme_dark">Тёмная</string>
 
     <string name="tab_vpn">VPN</string>
-    <string name="tab_subscriptions">Профили</string>
     <string name="tab_settings">Настройки</string>
 
     <string name="subscriptions_title">Профили</string>
@@ -58,7 +56,6 @@
     <string name="access_token_title">Активация GigaVPN</string>
     <string name="access_token_message">Вставьте токен, выданный ботом GigaVPN. Приложение само загрузит вашу подписку.</string>
     <string name="access_token_hint">Введите токен доступа</string>
-    <string name="access_token_helper">Токен — часть ссылки на подписку после /sub/</string>
     <string name="access_token_activate">Активировать</string>
     <string name="access_token_empty">Введите токен, присланный ботом GigaVPN.</string>
     <string name="access_token_invalid">Неверный токен. Скопируйте его из бота GigaVPN или личного кабинета.</string>
@@ -72,8 +69,6 @@
     <string name="subscription_clipboard_empty">В буфере обмена нет подписки или конфигурации.</string>
     <string name="subscription_builtin_detail">Встроенный · %1$s</string>
     <string name="subscription_private_name">GigaVPN Private</string>
-    <string name="gigavpn_private_active">Ваш токен доступа активен</string>
-    <string name="gigavpn_private_token_required">Введите токен доступа перед подключением</string>
     <string name="subscription_public_name">Резервный публичный доступ GigaVPN</string>
     <string name="subscription_detail">%1$s · %2$s · %3$s</string>
     <string name="subscription_never_updated">Никогда</string>

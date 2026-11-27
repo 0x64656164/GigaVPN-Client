@@ -97,7 +97,7 @@ class EngineFormsInstrumentedTest {
             EngineKind.DNS to mapOf("engine" to "masterdns"),
             EngineKind.IKEV2 to emptyMap(), EngineKind.IKEV2 to mapOf("authType" to "psk"),
             EngineKind.AMNEZIAWG to emptyMap())
-        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Persian to AppThemeMode.Dark).forEach { (lang, mode) ->
+        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Russian to AppThemeMode.Dark).forEach { (lang, mode) ->
             AppLanguagePreferenceStore(context).save(lang); AppThemePreferenceStore(context).save(mode)
             launch().use { scenario ->
                 cases.forEach { (kind, options) ->
@@ -152,7 +152,7 @@ class EngineFormsInstrumentedTest {
         }
     }
     @Test fun psiphonCountryPickerShowsLocalizedNamesAndPreservesChoiceWhenChangingMode() {
-        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Persian to AppThemeMode.Dark).forEach { (lang, mode) ->
+        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Russian to AppThemeMode.Dark).forEach { (lang, mode) ->
             AppLanguagePreferenceStore(context).save(lang); AppThemePreferenceStore(context).save(mode)
             launch().use { scenario ->
                 scenario.onActivity { host ->
@@ -181,7 +181,7 @@ class EngineFormsInstrumentedTest {
     }
 
     @Test fun everyEngineUsesAppTypographyPaletteAndOutlinedFieldsInBothLanguagesAndThemes() {
-        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Persian to AppThemeMode.Dark).forEach { (lang, mode) ->
+        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Russian to AppThemeMode.Dark).forEach { (lang, mode) ->
             AppLanguagePreferenceStore(context).save(lang); AppThemePreferenceStore(context).save(mode)
             launch().use { scenario ->
                 EngineKind.selectable.forEach { kind ->

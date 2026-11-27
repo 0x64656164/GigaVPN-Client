@@ -6,11 +6,12 @@ import org.junit.Test
 
 class AppLanguageTest {
     @Test
-    fun storedLanguageTagsResolveAndDefaultToPersian() {
+    fun storedLanguageTagsResolveAndDefaultToRussian() {
         assertEquals(AppLanguage.English, AppLanguage.fromLanguageTag("en"))
-        assertEquals(AppLanguage.Persian, AppLanguage.fromLanguageTag("fa"))
         assertEquals(AppLanguage.Russian, AppLanguage.fromLanguageTag("ru"))
-        assertEquals(AppLanguage.Persian, AppLanguage.fromLanguageTag(null))
+        // Legacy saved "fa" values fall back to Russian now that Farsi is removed.
+        assertEquals(AppLanguage.Russian, AppLanguage.fromLanguageTag("fa"))
+        assertEquals(AppLanguage.Russian, AppLanguage.fromLanguageTag(null))
     }
 
     @Test

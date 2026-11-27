@@ -37,7 +37,6 @@
 
     <string name="language_dialog_title">Language</string>
     <string name="language_english">English</string>
-    <string name="language_persian">فارسی</string>
     <string name="language_russian">Русский</string>
     <string name="language_section">Language</string>
     <string name="language_setting_title">App language</string>
@@ -48,7 +47,6 @@
     <string name="theme_dark">Dark</string>
 
     <string name="tab_vpn">VPN</string>
-    <string name="tab_subscriptions">Profiles</string>
     <string name="tab_settings">Settings</string>
 
     <string name="subscriptions_title">Profiles</string>
@@ -58,7 +56,6 @@
     <string name="access_token_title">GigaVPN activation</string>
     <string name="access_token_message">Paste the access token issued by the GigaVPN bot. The app will load your subscription automatically.</string>
     <string name="access_token_hint">Enter your access token</string>
-    <string name="access_token_helper">The token is the part of the subscription link after /sub/</string>
     <string name="access_token_activate">Activate</string>
     <string name="access_token_empty">Enter the token sent by the GigaVPN bot.</string>
     <string name="access_token_invalid">Invalid token. Copy it from the GigaVPN bot or your personal account.</string>
@@ -72,8 +69,6 @@
     <string name="subscription_clipboard_empty">The clipboard does not contain a subscription or configuration.</string>
     <string name="subscription_builtin_detail">Built-in · %1$s</string>
     <string name="subscription_private_name">GigaVPN Private</string>
-    <string name="gigavpn_private_active">Your access token is active</string>
-    <string name="gigavpn_private_token_required">Enter your access token before connecting</string>
     <string name="subscription_public_name">GigaVPN Public fallback</string>
     <string name="subscription_detail">%1$s · %2$s · %3$s</string>
     <string name="subscription_never_updated">Never</string>

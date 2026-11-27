@@ -9,14 +9,13 @@ enum class AppLanguage(
     val languageTag: String,
     @param:StringRes val labelRes: Int,
 ) {
-    Persian("fa", R.string.language_persian),
-    English("en", R.string.language_english),
     Russian("ru", R.string.language_russian),
+    English("en", R.string.language_english),
     ;
 
     companion object {
         fun fromLanguageTag(value: String?): AppLanguage =
-            entries.firstOrNull { it.languageTag == value } ?: Persian
+            entries.firstOrNull { it.languageTag == value } ?: Russian
     }
 }
 

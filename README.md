@@ -14,22 +14,18 @@
   </a>
 </p>
 
-A simple, open-source Android VPN client powered by [Mihomo](https://github.com/MetaCubeX/mihomo). GigaVPN works out of the box with a built-in GigaVPN subscription and also lets you bring your own.
-
-<p align="center">
-  <img src="docs/screenshots/whitevpn-fa.jpg" alt="GigaVPN Persian home screen" width="360">
-</p>
+A simple, open-source Android VPN client powered by [Mihomo](https://github.com/MetaCubeX/mihomo). GigaVPN uses one private subscription activated by a token from the Telegram bot.
 
 ## Features
 
-- One-tap **VPN** mode and local **proxy** mode
-- Built-in GigaVPN subscription, custom subscriptions, automatic refresh and offline cache
+- One-tap **VPN** connection with no proxy-mode switch
+- Single `GigaVPN Private` subscription with token activation and offline cache
 - Manual server selection plus latency and download-speed tests
 - Subscription, Iran-bypass and global-proxy routing modes
 - Split tunnelling: bypass selected apps or proxy only selected apps
 - Automatic DNS, DNS over HTTPS (DoH) and DNS over TLS (DoT)
 - Clean-IP scanning, optional ByeDPI compatibility and authenticated LAN sharing
-- Persian and English interfaces with system, light and dark themes
+- Russian and English interfaces with system, light and dark themes
 
 ## Supported methods and inputs
 
@@ -46,9 +42,9 @@ Subscriptions can be added as an HTTPS URL or pasted directly. GigaVPN accepts p
 
 ## Built-in subscription
 
-No subscription is required for first use. Automatic built-in connections try GigaVPN Private first when configured, then the public [GigaVPN Mihomo subscription](https://github.com/iampedii/whitedns-sub/blob/main/mihomo.yaml). Each source refreshes every 30 minutes while connected and keeps its own last valid copy for temporary network failures.
+GigaVPN exposes one subscription, `GigaVPN Private`. The token issued by the Telegram bot is appended to `baseSubscriptionUrl` from `assets/config/app_config.json`; the app then loads the subscription automatically. The former public subscription constant is kept only for reading legacy cached data and is not selectable.
 
-Official builds inject the private source through the `WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL` secret. Local builds can set the same environment variable or `privateMihomoSubscriptionUrl` in `secrets.properties`. When neither is set, the build succeeds with only the public built-in subscription; Private is omitted from menus and refreshes. Configured URLs must use HTTPS. Distributors can replace the public source with `WHITEDNS_MIHOMO_SUBSCRIPTION_URL`. Custom subscriptions remain separate and can be tested, selected, refreshed, edited or removed in the app.
+Set `baseSubscriptionUrl` to your own HTTPS endpoint before building. CI checks that the value uses HTTPS. The separate build-time `WHITEDNS_MIHOMO_SUBSCRIPTION_URL` and `WHITEDNS_PRIVATE_MIHOMO_SUBSCRIPTION_URL` variables remain for the legacy resolver, but the token flow uses `assets/config/app_config.json`.
 
 ## Community
 

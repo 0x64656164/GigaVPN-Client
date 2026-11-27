@@ -77,7 +77,7 @@ class MainActivityAppPreferencesTest {
             onView(allOf(withText("Dark"), isDisplayed())).check(matches(isDisplayed()))
             pressBack()
             onView(withContentDescription("App language: English")).perform(click())
-            onView(allOf(withText("فارسی"), isDisplayed())).check(matches(isDisplayed()))
+            onView(allOf(withText("Русский"), isDisplayed())).check(matches(isDisplayed()))
         }
     }
 

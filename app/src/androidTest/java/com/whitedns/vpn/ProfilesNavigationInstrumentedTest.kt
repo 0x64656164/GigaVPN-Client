@@ -68,7 +68,7 @@ class ProfilesNavigationInstrumentedTest {
         bitmap.recycle()
     }
     @Test fun creationSelectionAndSourceSwitchUseOneProfileListAndNeverStartAVpn() {
-        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Persian to AppThemeMode.Dark).forEach { (lang, mode) ->
+        listOf(AppLanguage.English to AppThemeMode.Light, AppLanguage.Russian to AppThemeMode.Dark).forEach { (lang, mode) ->
             AppLanguagePreferenceStore(context).save(lang); AppThemePreferenceStore(context).save(mode)
             EngineProfileStore(context).selectMihomo()
             launch().use { scenario ->
@@ -82,7 +82,7 @@ class ProfilesNavigationInstrumentedTest {
                 scenario.recreate()
                 onView(withTagValue(equalTo("name"))).inRoot(isDialog()).check(matches(withText(name)))
                 scenario.onActivity { host ->
-                    assertEquals(2, nodes(host.window.decorView).filterIsInstance<TabLayout>().single().selectedTabPosition)
+                    assertEquals(0, nodes(host.window.decorView).filterIsInstance<TabLayout>().single().selectedTabPosition)
                 }
                 onView(withText(R.string.engine_save)).inRoot(isDialog()).perform(click())
                 val saved = EngineProfileStore(context).profiles().single { it.name == name }

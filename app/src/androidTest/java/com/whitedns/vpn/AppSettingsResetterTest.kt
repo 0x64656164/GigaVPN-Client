@@ -127,7 +127,7 @@ class AppSettingsResetterTest {
                     context.getSharedPreferences(name, Context.MODE_PRIVATE).getString(markerKey, null),
                 )
             }
-            assertEquals(AppLanguage.Persian, AppLanguagePreferenceStore(context).read())
+            assertEquals(AppLanguage.Russian, AppLanguagePreferenceStore(context).read())
             assertEquals(AppThemeMode.System, AppThemePreferenceStore(context).read())
             assertNull(ConnectionLocationPreferenceStore(context).readSelectedCountryCode())
             assertEquals(SplitTunnelSettings(), SplitTunnelPreferenceStore(context).readSettings())

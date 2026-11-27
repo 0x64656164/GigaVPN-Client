@@ -67,7 +67,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -223,13 +222,9 @@ open class MainActivity : Activity() {
     private lateinit var connectionSelectorRow: DashboardDataRowView
     private lateinit var homeChainAfterSelectorRow: DashboardDataRowView
     private lateinit var homeChainSelectorRows: LinearLayout
-    private lateinit var homeSubscriptionSelectorRow: DashboardDataRowView
     private lateinit var homeFragmentSelectorRow: DashboardDataRowView
     private lateinit var settingsSubscriptionSelectorRow: DashboardDataRowView
     private var updateSplitTunnelControlsEnabled: ((Boolean) -> Unit)? = null
-    private lateinit var connectionModeGroup: MaterialButtonToggleGroup
-    private lateinit var vpnModeButton: MaterialButton
-    private lateinit var proxyModeButton: MaterialButton
     private lateinit var dashboardLocalEndpointText: TextView
     private lateinit var dashboardChainText: TextView
     private lateinit var dashboardConnectionMetadataSection: View
@@ -239,7 +234,6 @@ open class MainActivity : Activity() {
     private var chainControlsSuppressed = false
     private var chainPickerRefreshAttempted = false
     private var homeLocationDivider: View? = null
-    private var homeSubscriptionDivider: View? = null
     private lateinit var tlsIntegrityCheckbox: MaterialSwitch
     private lateinit var autoEchCheckbox: MaterialSwitch
     private lateinit var alwaysOnStatusText: TextView
@@ -291,9 +285,7 @@ open class MainActivity : Activity() {
     private lateinit var frontingIpInputLayout: TextInputLayout
     private lateinit var frontingIpErrorText: TextView
     private lateinit var refreshActionButton: MaterialButton
-    private lateinit var subscriptionsList: LinearLayout
     private lateinit var vpnTabContent: View
-    private lateinit var subscriptionsTabContent: View
     private lateinit var advancedTabContent: View
     private var connectionCountryFlag: String = ""
     private var debugFrontingIp: String = ""
@@ -427,11 +419,9 @@ open class MainActivity : Activity() {
         }
         appShellView = shell
         vpnTabContent = buildDashboard()
-        subscriptionsTabContent = buildSubscriptionsScreen().apply { visibility = View.GONE }
         advancedTabContent = buildAdvancedScreen().apply { visibility = View.GONE }
         val content = FrameLayout(this).apply {
             addView(vpnTabContent, FrameLayout.LayoutParams(-1, -1))
-            addView(subscriptionsTabContent, FrameLayout.LayoutParams(-1, -1))
             addView(advancedTabContent, FrameLayout.LayoutParams(-1, -1))
         }
         shell.addView(content, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -592,120 +582,13 @@ open class MainActivity : Activity() {
     private fun showAppTab(position: Int) {
         if (position != 2) advancedSettingsBackAction?.invoke()
         vpnTabContent.visibility = if (position == 1) View.VISIBLE else View.GONE
-        subscriptionsTabContent.visibility = if (position == 0) View.VISIBLE else View.GONE
         advancedTabContent.visibility = if (position == 2) View.VISIBLE else View.GONE
-        if (position == 0) renderSubscriptions()
         if (position == 1) renderConnectionSelection()
         if (position == 2) renderAdvancedControls()
     }
 
-    private fun buildSubscriptionsScreen(): View {
-        val scroll = ScrollView(this).apply {
-            isFillViewport = true
-            clipToPadding = false
-            setBackgroundColor(withAlpha(BACKGROUND, 0))
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(scroll) { view, insets ->
-            val topInset = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout(),
-            ).top
-            view.setPadding(view.paddingLeft, topInset, view.paddingRight, view.paddingBottom)
-            insets
-        }
-        val content = MaxWidthLinearLayout(this).apply {
-            maxWidthPx = dp(520)
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(24), dp(34), dp(24), dp(40))
-        }
-        val subscriptionsHeaderCopy = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            addView(TextView(this@MainActivity).apply {
-                setText(R.string.subscriptions_title)
-                textSize = 28f
-                typeface = WhiteDnsDisplayTypeface
-                setTextColor(TEXT_PRIMARY)
-                includeFontPadding = false
-                gravity = Gravity.START
-            })
-            addView(
-                TextView(this@MainActivity).apply {
-                    setText(R.string.subscriptions_description)
-                    textSize = 14f
-                    typeface = WhiteDnsBodyTypeface
-                    setTextColor(TEXT_SECONDARY)
-                    includeFontPadding = false
-                    gravity = Gravity.START
-                },
-                LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(4) },
-            )
-        }
-        val addSubscriptionButton = MaterialButton(this).apply {
-            // GigaVPN: a single clean activation entry point instead of the legacy import menu.
-            setText(R.string.access_token_add_button)
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            textDirection = View.TEXT_DIRECTION_LOCALE
-            setAllCaps(false)
-            textSize = 12f
-            typeface = WhiteDnsBodyBoldTypeface
-            isSingleLine = true
-            setPadding(dp(8), 0, dp(8), 0)
-            minWidth = 0
-            insetTop = 0
-            insetBottom = 0
-            cornerRadius = dp(8)
-            backgroundTintList = ColorStateList.valueOf(SURFACE)
-            strokeWidth = dp(1)
-            strokeColor = ColorStateList.valueOf(TEAL)
-            rippleColor = ColorStateList.valueOf(withAlpha(TEAL, 24))
-            setTextColor(TEAL)
-            setOnClickListener { showAccessTokenDialog() }
-        }
-        val compactHeader = resources.configuration.screenWidthDp < 360
-        content.addView(LinearLayout(this).apply {
-            orientation = if (compactHeader) LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            gravity = if (compactHeader) Gravity.START else Gravity.CENTER_VERTICAL
-            if (compactHeader) {
-                addView(
-                    subscriptionsHeaderCopy,
-                    LinearLayout.LayoutParams(-1, -2),
-                )
-                addView(
-                    addSubscriptionButton,
-                    LinearLayout.LayoutParams(-2, dp(44)).apply { topMargin = dp(16) },
-                )
-            } else {
-                addView(
-                    subscriptionsHeaderCopy,
-                    LinearLayout.LayoutParams(0, -2, 1f),
-                )
-                addView(
-                    addSubscriptionButton,
-                    LinearLayout.LayoutParams(dp(84), dp(44)).apply { marginStart = dp(16) },
-                )
-            }
-        })
-        subscriptionsList = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-        }
-        content.addView(subscriptionsList, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(24) })
-        scroll.addView(content, ViewGroup.LayoutParams(-1, -2))
-        renderSubscriptions()
-        return scroll
-    }
-
     private fun renderSubscriptions() {
-        if (!::subscriptionsList.isInitialized) return
-        subscriptionsList.removeAllViews()
         val selectedName = selectedSubscriptionName()
-        homeSubscriptionSelectorRow.setValue(selectedName)
-        homeSubscriptionSelectorRow.contentDescription =
-            getString(
-                R.string.settings_value_content_description,
-                getString(R.string.subscriptions_title),
-                selectedName,
-            )
         if (::settingsSubscriptionSelectorRow.isInitialized) {
             settingsSubscriptionSelectorRow.setValue(selectedName)
             settingsSubscriptionSelectorRow.contentDescription =
@@ -715,193 +598,7 @@ open class MainActivity : Activity() {
                     selectedName,
                 )
         }
-        // No selectable profile list: the app only exposes the single GigaVPN Private route.
-        val tokenActive = gigavpnTokenStore.hasToken()
-        subscriptionsList.removeAllViews()
-        subscriptionsList.addView(
-            subscriptionCard(
-                title = getString(R.string.subscription_private_name),
-                detail = getString(
-                    if (tokenActive) R.string.gigavpn_private_active
-                    else R.string.gigavpn_private_token_required,
-                ),
-                selected = true,
-                error = "",
-                onTestConnections = {},
-                actions = listOf(R.string.access_token_add_button to { showAccessTokenDialog() }),
-            ),
-        )
         renderHomeConnectionRows()
-    }
-
-    /* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
-    /* Hallmark · component: subscription card · genre: modern-minimal · design-system: design.md · designed-as-app */
-    private fun subscriptionCard(
-        title: String,
-        detail: String,
-        selected: Boolean,
-        error: String,
-        onTestConnections: () -> Unit,
-        actions: List<Pair<Int, () -> Unit>>,
-    ): View = LinearLayout(this).apply {
-        orientation = LinearLayout.VERTICAL
-        layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-        gravity = Gravity.START
-        minimumHeight = dp(112)
-        setPaddingRelative(dp(16), dp(12), dp(16), dp(12))
-        elevation = 0f
-        val selectAction = actions.firstOrNull { it.first == R.string.subscription_action_select }
-        val overflowActions = actions.filterNot { it.first == R.string.subscription_action_select }
-        val canSelect = selectAction != null && !selected
-        isClickable = canSelect
-        isFocusable = canSelect
-        contentDescription = "$title, ${getString(
-            if (selected) R.string.subscription_selected_badge else R.string.subscription_action_select,
-        )}"
-        background = if (selected) {
-            glassSurfaceDrawable(radiusDp = 12, highlighted = true)
-        } else {
-            RippleDrawable(
-                ColorStateList.valueOf(withAlpha(TEAL, 28)),
-                glassSurfaceDrawable(radiusDp = 12),
-                null,
-            )
-        }
-        clipToOutline = true
-        if (canSelect) {
-            setOnClickListener { selectAction?.second?.invoke() }
-        }
-
-        addView(
-            LinearLayout(this@MainActivity).apply {
-                orientation = LinearLayout.HORIZONTAL
-                layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-                gravity = Gravity.CENTER_VERTICAL
-                addView(
-                    TextView(this@MainActivity).apply {
-                        text = title
-                        textSize = 16f
-                        typeface = WhiteDnsBodyBoldTypeface
-                        setTextColor(TEXT_PRIMARY)
-                        includeFontPadding = false
-                        maxLines = 1
-                        ellipsize = TextUtils.TruncateAt.END
-                        layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-                        textDirection = View.TEXT_DIRECTION_FIRST_STRONG
-                        gravity = Gravity.START
-                    },
-                    LinearLayout.LayoutParams(0, -2, 1f),
-                )
-                if (selected) addView(
-                    TextView(this@MainActivity).apply {
-                        setText(R.string.subscription_selected_badge)
-                        textSize = 12f
-                        typeface = WhiteDnsBodyBoldTypeface
-                        setTextColor(TEAL)
-                        includeFontPadding = false
-                        gravity = Gravity.CENTER
-                        isSingleLine = true
-                        setPaddingRelative(dp(8), dp(4), dp(8), dp(4))
-                        background = GradientDrawable().apply {
-                            shape = GradientDrawable.RECTANGLE
-                            cornerRadius = dp(12).toFloat()
-                            setColor(withAlpha(TEAL, if (palette.isDark) 34 else 22))
-                            setStroke(dp(1), withAlpha(TEAL, 92))
-                        }
-                    },
-                    LinearLayout.LayoutParams(-2, -2).apply { marginStart = dp(12) },
-                )
-            },
-            LinearLayout.LayoutParams(-1, -2),
-        )
-        addView(TextView(this@MainActivity).apply {
-            text = detail
-            textSize = 12f
-            typeface = WhiteDnsBodyTypeface
-            setTextColor(TEXT_SECONDARY)
-            includeFontPadding = false
-            maxLines = 2
-            ellipsize = TextUtils.TruncateAt.END
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            textDirection = View.TEXT_DIRECTION_LOCALE
-            gravity = Gravity.START
-        }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(4) })
-        if (error.isNotBlank()) addView(TextView(this@MainActivity).apply {
-            text = getString(R.string.subscription_error, error)
-            textSize = 12f
-            typeface = WhiteDnsBodyBoldTypeface
-            setTextColor(ERROR)
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            textDirection = View.TEXT_DIRECTION_LOCALE
-            gravity = Gravity.START
-        }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) })
-
-        fun actionButton(
-            @StringRes labelRes: Int,
-            @DrawableRes iconRes: Int,
-            accent: Boolean,
-            action: (View) -> Unit,
-        ): MaterialButton = MaterialButton(this@MainActivity).apply {
-            setText(labelRes)
-            setIconResource(iconRes)
-            iconTint = ColorStateList.valueOf(if (accent) TEAL else TEXT_SECONDARY)
-            iconSize = dp(18)
-            iconPadding = dp(8)
-            iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
-            setAllCaps(false)
-            isSingleLine = true
-            ellipsize = TextUtils.TruncateAt.END
-            textSize = 14f
-            typeface = WhiteDnsBodyBoldTypeface
-            minWidth = 0
-            minimumWidth = 0
-            minHeight = dp(48)
-            minimumHeight = dp(48)
-            insetTop = 0
-            insetBottom = 0
-            cornerRadius = dp(8)
-            setPaddingRelative(dp(12), 0, dp(12), 0)
-            backgroundTintList = ColorStateList.valueOf(palette.surfaceElevated2)
-            strokeWidth = dp(1)
-            strokeColor = ColorStateList.valueOf(if (accent) withAlpha(TEAL, 150) else OUTLINE)
-            rippleColor = ColorStateList.valueOf(withAlpha(TEAL, 26))
-            setTextColor(if (accent) TEAL else TEXT_PRIMARY)
-            setOnClickListener(action)
-        }
-
-        addView(
-            LinearLayout(this@MainActivity).apply {
-                orientation = LinearLayout.HORIZONTAL
-                layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-                addView(
-                    actionButton(
-                        labelRes = R.string.subscription_action_test,
-                        iconRes = R.drawable.ic_connection_test,
-                        accent = true,
-                    ) { onTestConnections() },
-                    LinearLayout.LayoutParams(0, dp(48), 1f),
-                )
-                addView(
-                    actionButton(
-                        labelRes = R.string.subscription_action_options,
-                        iconRes = R.drawable.ic_more_vert,
-                        accent = false,
-                    ) { view ->
-                        whiteDnsPopupMenu(view).apply {
-                            overflowActions.forEachIndexed { index, (labelRes, _) ->
-                                menu.add(0, index, index, labelRes)
-                            }
-                            setOnMenuItemClickListener { item ->
-                                overflowActions[item.itemId].second()
-                                true
-                            }
-                        }.show()
-                    },
-                    LinearLayout.LayoutParams(0, dp(48), 1f).apply { marginStart = dp(8) },
-                )
-            },
-            LinearLayout.LayoutParams(-1, dp(48)).apply { topMargin = dp(12) },
-        )
     }
 
     private fun openSubscriptionConnectionTesting(subscriptionId: String) {
@@ -983,12 +680,10 @@ open class MainActivity : Activity() {
         }
         val tokenLayout = TextInputLayout(this).apply {
             hint = getString(R.string.access_token_hint)
-            helperText = getString(R.string.access_token_helper)
             boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
             boxBackgroundColor = withAlpha(SURFACE, if (palette.isDark) 232 else 246)
             boxStrokeColor = TEAL
             defaultHintTextColor = ColorStateList.valueOf(TEXT_SECONDARY)
-            setHelperTextColor(ColorStateList.valueOf(TEXT_SECONDARY))
             setBoxCornerRadii(dp(8).toFloat(), dp(8).toFloat(), dp(8).toFloat(), dp(8).toFloat())
             addView(tokenInput)
         }
@@ -1762,81 +1457,6 @@ open class MainActivity : Activity() {
             }, LinearLayout.LayoutParams(-2, -2).apply { marginStart = dp(9) })
         }
 
-        // New segmented tab switcher with rounded corners
-        val connectionModeButtonColors = arrayOf(
-            intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked),
-            intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_checked),
-            intArrayOf(-android.R.attr.state_enabled, android.R.attr.state_checked),
-            intArrayOf(-android.R.attr.state_enabled, -android.R.attr.state_checked),
-        )
-        fun connectionModeButton(@StringRes textRes: Int) = MaterialButton(
-            this,
-            null,
-            com.google.android.material.R.attr.materialButtonOutlinedStyle,
-        ).apply {
-            id = View.generateViewId()
-            setText(textRes)
-            setAllCaps(false)
-            textSize = 14f
-            typeface = WhiteDnsBodyBoldTypeface
-            isCheckable = true
-            minWidth = 0
-            minimumWidth = 0
-            minHeight = dp(44)
-            minimumHeight = dp(44)
-            insetTop = 0
-            insetBottom = 0
-            setPadding(0, 0, 0, 0)
-            cornerRadius = dp(12)
-            strokeWidth = 0
-            elevation = 0f
-            stateListAnimator = null
-            maxLines = 1
-            ellipsize = TextUtils.TruncateAt.END
-            val selectedBackground = withAlpha(TEAL, if (palette.isDark) 64 else 32)
-            backgroundTintList = ColorStateList(
-                connectionModeButtonColors,
-                intArrayOf(selectedBackground, Color.TRANSPARENT, withAlpha(TEAL, 24), Color.TRANSPARENT),
-            )
-            setTextColor(
-                ColorStateList(
-                    connectionModeButtonColors,
-                    intArrayOf(
-                        TEAL,
-                        TEXT_PRIMARY,
-                        withAlpha(TEAL, 120),
-                        withAlpha(TEXT_PRIMARY, 110),
-                    ),
-                ),
-            )
-            rippleColor = ColorStateList.valueOf(withAlpha(TEAL, 28))
-            gravity = Gravity.CENTER
-        }
-        vpnModeButton = connectionModeButton(R.string.connection_mode_vpn)
-        proxyModeButton = connectionModeButton(R.string.connection_mode_proxy)
-        connectionModeGroup = MaterialButtonToggleGroup(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-            isSingleSelection = true
-            isSelectionRequired = true
-            // Container with rounded background
-            background = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = dp(16).toFloat()
-                setColor(withAlpha(SURFACE, 200))
-                setStroke(dp(1), withAlpha(OUTLINE, 180))
-            }
-            minimumHeight = dp(52)
-            setPadding(dp(4), dp(4), dp(4), dp(4))
-            addView(vpnModeButton, LinearLayout.LayoutParams(0, dp(44), 1f))
-            proxyModeButton.visibility = View.GONE
-            check(vpnModeButton.id)
-            addOnButtonCheckedListener { _, _, isChecked ->
-                if (isChecked && isEnabled) {
-                    saveConnectionMode(ConnectionMode.Vpn)
-                }
-            }
-        }
         connectionOrb = ConnectionOrbView(this).apply {
             isClickable = true
             isFocusable = true
@@ -2101,7 +1721,7 @@ open class MainActivity : Activity() {
             )
             setOnRowClickListener {
                 // An engine route cannot be chained; send the user to pick a public config instead.
-                if (EngineProfileStore(this@MainActivity).selectedEngineId() != null) showProfilesPage()
+                if (EngineProfileStore(this@MainActivity).selectedEngineId() != null) showVpnPage()
                 else showChainNodePicker(ConnectionChainSlot.After)
             }
         }
@@ -2116,16 +1736,6 @@ open class MainActivity : Activity() {
                 },
             )
             addView(homeChainAfterSelectorRow, LinearLayout.LayoutParams(-1, -2))
-        }
-        homeSubscriptionSelectorRow = DashboardDataRowView(this).apply {
-            val subscriptionName = selectedSubscriptionName()
-            setRow(getString(R.string.subscriptions_title), subscriptionName)
-            contentDescription = getString(
-                R.string.settings_value_content_description,
-                getString(R.string.subscriptions_title),
-                subscriptionName,
-            )
-            setOnRowClickListener { showAccessTokenDialog() }
         }
         homeFragmentSelectorRow = DashboardDataRowView(this).apply {
             setRow(getString(R.string.fragments_section), "")
@@ -2180,13 +1790,6 @@ open class MainActivity : Activity() {
                 })
             addView(connectionSelectorRow, LinearLayout.LayoutParams(-1, -2))
             addView(homeChainSelectorRows, LinearLayout.LayoutParams(-1, -2))
-            homeSubscriptionDivider = View(this@MainActivity).apply { setBackgroundColor(withAlpha(OUTLINE, 150)) }
-            addView(homeSubscriptionDivider,
-                LinearLayout.LayoutParams(-1, dp(1)).apply {
-                    marginStart = dp(18)
-                    marginEnd = dp(18)
-                })
-            addView(homeSubscriptionSelectorRow, LinearLayout.LayoutParams(-1, -2))
             addView(
                 View(this@MainActivity).apply { setBackgroundColor(withAlpha(OUTLINE, 150)) },
                 LinearLayout.LayoutParams(-1, dp(1)).apply {
@@ -2207,11 +1810,6 @@ open class MainActivity : Activity() {
             addView(
                 signalSection,
                 contentParams(dp(24)),
-            )
-            // VPN/Proxy tab switcher
-            addView(
-                connectionModeGroup,
-                contentParams(dp(16)),
             )
             addView(
                 dataRows,
@@ -4683,7 +4281,7 @@ open class MainActivity : Activity() {
         pickerSubscriptionId: String? = null,
     ) {
         if (chainSlot == null && EngineProfileStore(this).selectedEngineId() != null) {
-            showProfilesPage()
+            showVpnPage()
             return
         }
         if (connectionTestingPageVisible && !rebuild) return
@@ -6098,7 +5696,7 @@ open class MainActivity : Activity() {
         homeChainSelectorRows.visibility = if (settings.enabled) View.VISIBLE else View.GONE
         // Location and subscription do not steer a chain; in chain mode only the two nodes are shown.
         val normalRowsVisibility = if (settings.enabled) View.GONE else View.VISIBLE
-        listOfNotNull(locationSelectorRow, homeLocationDivider, homeSubscriptionSelectorRow, homeSubscriptionDivider)
+        listOfNotNull(locationSelectorRow, homeLocationDivider)
             .forEach { it.visibility = normalRowsVisibility }
         connectionSelectorRow.setLabel(getString(if (settings.enabled) R.string.chain_node_first else R.string.connection_label))
         if (!settings.enabled) return
@@ -6996,17 +6594,6 @@ open class MainActivity : Activity() {
         reconnectForConnectionOptionChange()
     }
 
-    private fun saveConnectionMode(mode: ConnectionMode) {
-        // Proxy mode is no longer offered: GigaVPN always routes through the VPN tunnel.
-        val normalized = ConnectionMode.Vpn
-        if (connectionModePreferenceStore.read() == normalized) return
-        connectionModePreferenceStore.save(normalized)
-        DiagnosticLogger.info(this, "activity.connectionMode.saved", "mode=${normalized.wireName}")
-        renderLanSharingControls(settingsEnabled = true)
-        if (buttonModel.state != VpnState.Started) return
-        beginConnectFlow(Actions.RECONNECT)
-    }
-
     private fun saveLanSharingPasswordRequired(required: Boolean) {
         val settings = lanSharingPreferenceStore.read()
         if (settings.passwordRequired == required) return
@@ -7034,15 +6621,6 @@ open class MainActivity : Activity() {
 
     private fun renderLanSharingControls(settingsEnabled: Boolean) {
         val settings = lanSharingPreferenceStore.read()
-        if (::connectionModeGroup.isInitialized) {
-            val modeSelectionEnabled = settingsEnabled && !alwaysOnMode && !lockdownMode
-            connectionModeGroup.isEnabled = modeSelectionEnabled
-            vpnModeButton.isEnabled = modeSelectionEnabled
-            proxyModeButton.visibility = View.GONE
-            if (connectionModeGroup.checkedButtonId != vpnModeButton.id) {
-                connectionModeGroup.check(vpnModeButton.id)
-            }
-        }
         renderDashboardLocalEndpoint(ConnectionMode.Vpn)
         if (::lanSharingCheckbox.isInitialized) {
             val details = lanSharingDetails(settings)
@@ -7728,9 +7306,9 @@ open class MainActivity : Activity() {
         dialog.showWhiteDnsDialog()
     }
 
-    private fun showProfilesPage() {
+    private fun showVpnPage() {
         closeConnectionTestingPage()
-        appTabs.getTabAt(2)?.select()
+        appTabs.getTabAt(1)?.select()
     }
 
     private fun engineSettingsNoticeView() = TextView(this).apply {
@@ -7793,10 +7371,6 @@ open class MainActivity : Activity() {
             for (index in 0 until frontingIpChipGroup.childCount) gate(frontingIpChipGroup.getChildAt(index), policy.fronting)
         }
         updateSplitTunnelControlsEnabled?.invoke(idle && policy.apps)
-        if (::connectionModeGroup.isInitialized) {
-            gate(proxyModeButton, policy.proxy && !alwaysOnMode && !lockdownMode)
-            gate(vpnModeButton, !alwaysOnMode && !lockdownMode)
-        }
         if (::lanSharingCheckbox.isInitialized) {
             gate(lanSharingCheckbox, policy.sharing)
             gate(lanSharingPasswordCheckbox, policy.sharing)
